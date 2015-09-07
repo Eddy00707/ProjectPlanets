@@ -6,9 +6,11 @@ public class PlayerGravity : NetworkBehaviour {
 
 	public GameObject upperBody,lowerBody;
 	public float upperBodyDistance;
-	public LineRenderer graviPath;
+//	public LineRenderer graviPath;
 	public GameObject[] gravityPlanets, gravitySuns;
 	public float GravityMultiplier=1f;
+
+	const float HOVER_DISTANCE = 2;
 
 	void Start () 
 	{
@@ -73,9 +75,27 @@ public class PlayerGravity : NetworkBehaviour {
 				//Vector3 lookDirection=Vector3.Cross(upperBody.transform.right, upDirection);
 				lowerBody.transform.up = upDirection;
 
-				Vector3 destination = lowerBody.transform.position+upDirection*upperBodyDistance;
+				Vector3 hoverForce=Vector3.zero;
+				RaycastHit hit;
+				if(Physics.Raycast (lowerBody.transform.position, mainVector, out hit))
+				{
+					if(hit.collider.gameObject)
+					{
+						float distance =Vector3.Magnitude(hit.point-lowerBody.transform.position);
+						//if(distance<HOVER_DISTANCE)
+						{
+							hoverForce=-mainVector*Mathf.Pow (HOVER_DISTANCE/distance,0.2f);
+						}
+					}
+				}
+				//Debug.Log("Forces:"+hoverForce+","+mainVector);
+				mainVector+=hoverForce;
 				b.force=mainVector;
 
+
+
+				//settting upper body position
+				Vector3 destination = lowerBody.transform.position+upDirection*upperBodyDistance;
 				Vector3 movement =  destination-upperBody.transform.position;
 				upperBody.GetComponent<Rigidbody>().AddForce(movement);
 
