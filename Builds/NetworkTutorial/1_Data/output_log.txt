@@ -1,0 +1,48 @@
+Initializeeeengine version: 55111f1 (204046fc06d4d8
+)
+GfxxDevice: creating device client; threaed=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: AMD Radeon(TM) R7 Graphics (ID=0x130c)
+    Vendor:   ATI
+    VRAM:     3046 MB
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: AMD Radeon(TM) R7 Graphics (ID=0x130c)
+    Vendor:   ATI
+    VRAM:     3046 MB
+Begin MonoManager ReloadAssembly
+Begin MonoManager ReloadAssembly
+PPlatform assmbly: E:\:\Unity projects\Project 3. Planets\Builds\NetworkTurtorialData\Managed\gUnityEngine.dll ll (thim message is harmless)
+
+LLoading E\UUnity projects\Proejec3. Planets\Buildslds\NetworkTutorial\1_Data\ManadgUnityityEngine.dll into Unity Chd ld Daimai
+n
+Platform assembly:latform assembly: E:\Unity pr. jelane\Projeilt 3. PlanrkTutouilal\1_etator\Managrid\As1_Dmbly-Managrpd\Airsemblss-CSha (thfirstpasage is (taris mes)
+age Lo harmg E:\U
+nity pLoading\Pr:\Unctty prPlaects\\Buojedst NetwPlanets\riuil\1_DataworkTutoriass\1mbly-C\Managed\Asseass.y-CShato Ufiity pasil.d Domain
+ Unity Child Domain
+Platform arm mbly: El:\Unity projectoj\Prts\ecrojectPl3. Pla\Buis\BuildsworkTutrkTut\1_Data1_Data\Managemblyed\Assemdlly-CSharp.dll (this marmlage is
+ harmLoadin
+g E:LUnity projeUnts\Projecects\ Project 3.uilds\tNetworks\Ntorioal\1_Data\M1_Datad\Manageb\Asly-CSharSharpl dll i Unitynithild Domain
+ain
+PPalform am assemblyE: E:\Unity prctjectro\Prot ect 3. Planets\lduilNes\Nortworkoritol\1_l\1_a\ata\Mana\Ued\UnEigiyEe.Uine.Ul .dlhi (tmeis messag h is harmle
+ss)
+Loadioag E:g E:\ty ity protsectsojProject 3. Planets\Bds\Nds\NortwortoTutalrialDa1_DaMaa\MaedagedityEityEne.ine.dlI.dll i UnitUn Chy Cd ildmaDoma
+in
+PlatfPrl asform ay: emb\Ulity proUnicts\Project 3. ojlanets\Buianets\Builds\NeoriarkTutoria\M\1_Dged\UnitagEned\UnNetworking.dll orkiis .dll (this message s)
+ harmloass)
+g E:\ULity pro E:\Unity proj 3t P\lanets\B3.uilds\NetBuoilds\Networ1kDauta\riana\ed_\Uni\yEngine.Networking.ndll intoking.dll inlo UDoitainC
+hild Domain
+PPatform asasseblbly E:E:\Unity projectsProjject 3.. Plannets\Builds\NetworkTutooriil\1_DatataMaMaagage\dnitniEngEnne.AeaAnytlycs.dsl (this mes maessags harmless)es
+s)
+LoadiLoading it:\Upritojeroje\Ptrojrocj 3. P3.anPlan\BtsilBui\Nds\woetwTotoriutl\1_Data_Daana\gMd\nagity\UEngyEnngine.Analytills.dlto innit Unihiy C Dold Dom
+ain
+- Completed reload, in  0.203 seconds
+- Completed reload, in  0.203 seconds
+<RRI> Iniialalzing inpupu..
+
+<RI> InputI>inIntput initalized.
+ddsktkp:o 1920x1080 6 Hz;Hz; viualual:920x108108at 0t 0
+,0
+<RI> Initialized touch support.
+<RI> Initialized touch support.

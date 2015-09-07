@@ -1,0 +1,3200 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://habrahabr.ru/post/212055/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script async="" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/fbevents.js"></script><script type="text/javascript" async="" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/watch.js"></script><script async="" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/analytics.js"></script>
+    
+    <meta content="width=1024" name="viewport">
+
+
+    <title>Методы организации взаимодействия между скриптами в Unity3D / Хабрахабр</title>
+
+    <meta name="yandex-verification" content="67d46b975fa41645"> <!-- яндекс вебмастер - верификация -->
+
+    <meta name="description" content="Вступление
+Даже средний Unity3D проект очень быстро наполняется большим количеством разнообразных скриптов и возникает вопрос взаимодействия этих скриптов друг с другом. 
+Данная статья предлагает...">
+    <meta name="keywords" content="c#, game development, unity3d">
+
+    	<meta property="fb:app_id" content="444736788986613"> 
+<meta property="og:type" content="article"> 
+<meta property="og:url" content="http://habrahabr.ru/post/212055/"> 
+<meta property="og:title" content="Методы организации взаимодействия между скриптами в Unity3D">
+	<meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/900/ef2/696/900ef2696d5182d43a87f20483dfe6c1.jpg">
+	<link rel="image_src" href="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/900ef2696d5182d43a87f20483dfe6c1.jpg"><meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/6dc/5a7/da3/6dc5a7da31258029d78f692b51778e73.jpg">
+	<link rel="image_src" href="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/6dc5a7da31258029d78f692b51778e73.jpg"><meta property="og:image" content="https://lh4.googleusercontent.com/-AMjWHrGQ4Qs/UvdERpSw-KI/AAAAAAAAzV0/omPPQOdLxJc/w952-h540-no/example03.jpg">
+	<link rel="image_src" href="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/example03.jpg"><meta property="og:image" content="https://lh3.googleusercontent.com/-j-Fk8LOBCKs/UvdESA_Nh9I/AAAAAAAAzV4/_BJFPjQTTbg/w958-h542-no/example04.jpg">
+	<link rel="image_src" href="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/example04.jpg">
+	
+<meta property="og:description" content="Вступление Даже средний Unity3D проект очень быстро наполняется большим количеством разнообразных скриптов и возникает вопрос взаимодействия этих скриптов друг...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@habrahabr">
+	<meta property="al:ios:url" content="habrahabr://post/212055">
+<meta property="al:ios:app_store_id" content="778613673">
+<meta property="al:ios:app_name" content="Habrahabr">
+<meta property="al:android:url" content="habrahabr://post/212055">
+<meta property="al:android:app_name" content="Habrahabr">
+<meta property="al:android:package" content="ru.habrahabr">
+<meta property="al:windows_phone:url" content="habrahabr://post/212055">
+<meta property="al:windows_phone:app_name" content="Habrahabr">
+<meta property="al:windows_phone:app_id" content="460a6bd6-8955-470f-935e-9ea1726a6060">
+	<link rel="canonical" href="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр.html">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="http://m.habrahabr.ru/post/212055/">
+
+
+
+
+    <link href="http://habrahabr.ru/styles/1436891588/assets/global_main.css" rel="stylesheet" media="all">
+    <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/global_main.js"></script>
+        <link href="http://habrahabr.ru/styles/1436891588/assets/post_common_css.css" rel="stylesheet" media="all">
+    <link href="http://habrahabr.ru/styles/1436891588/users/all.css" rel="stylesheet" media="all">
+
+    <link href="http://habrahabr.ru/styles/1436891588/printer.css" rel="stylesheet" media="print">
+
+    
+    
+
+
+
+
+        <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/post_common_js.js"></script>
+    <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/all.js"></script>
+
+
+      <!-- www.criteo.com/ru -->
+<script type="text/javascript">
+  var crtg_nid="2580";
+  var crtg_cookiename="cto_rtt";
+  var crtg_varname="crtg_content";
+  function crtg_getCookie(c_name){
+    var i,x,y,ARRCookies=document.cookie.split(";");
+    for(i=0;i<ARRCookies.length;i++){
+      x=ARRCookies[i].substr(0,ARRCookies[i].indexOf("="));
+      y=ARRCookies[i].substr(ARRCookies[i].indexOf("=")+1);
+      x=x.replace(/^\s+|\s+$/g,"");
+      if(x==c_name){return unescape(y);}
+    }
+    return'';
+  }
+  var crtg_content = crtg_getCookie(crtg_cookiename);var crtg_rnd=Math.floor(Math.random()*99999999999);
+  var crtg_url=location.protocol+'//rtax.criteo.com/delivery/rta/rta.js?netId='+escape(crtg_nid);crtg_url+='&cookieName='+escape(crtg_cookiename);crtg_url+='&rnd='+crtg_rnd;crtg_url+='&varName=' + escape(crtg_varname);
+  var crtg_script=document.createElement('script');crtg_script.type='text/javascript';crtg_script.src=crtg_url;crtg_script.async=true;
+  if(document.getElementsByTagName("head").length>0)document.getElementsByTagName("head")[0].appendChild(crtg_script);
+  else
+  if(document.getElementsByTagName("body").length>0)document.getElementsByTagName("body")[0].appendChild(crtg_script);
+</script><script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/rta.js" async=""></script>
+      <script>
+        var N = 5;
+        var ar_duo1 = Math.floor(Math.random()*N+1);
+      </script>
+      <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/adriver.core.2.js"></script>
+
+    <link title="Хабрахабр / Комментарии к публикации «Методы организации взаимодействия между скриптами в Unity3D»" type="application/rss+xml" rel="alternate" href="http://habrahabr.ru/rss/post/212055/">
+
+    
+<script type="text/javascript">
+
+    var user_type = "guest";
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-726094-1',  'auto' );
+    ga('create', 'UA-726094-24', 'auto', {'name': 'HGM'});
+
+  ga('require', 'displayfeatures');
+  ga('set', 'dimension1', user_type); // user type - guest/readonly/habrauser
+  //ga('set', 'dimension2', username); // username
+
+
+
+  if(typeof removeUtms === 'undefined') {
+    removeUtms = function(){};
+  }
+  ga('HGM.send', 'pageview');
+  ga('HGM.set', 'dimension1', user_type);
+  ga('HGM.set', 'dimension2', "habrahabr");
+  ga('send', 'pageview', { 'hitCallback': removeUtms });
+
+</script>
+
+
+    <meta content="Хабрахабр" name="apple-mobile-web-app-title">
+<link href="http://habrahabr.ru/images/apple-touch-icon_142x142.png" rel="apple-touch-icon" type="image/png">
+  <style type="text/css">/*.lleo_errorSelection *::-moz-selection,
+.lleo_errorSelection *::selection,
+.lleo_errorSelection *::-webkit-selection {
+    background-color: red !important;
+    color: #fff !important;;
+}*/
+
+#lleo_dialog,
+#lleo_dialog * {
+    color: #000 !important;
+    font: normal 13px Arial, Helvetica !important;
+    line-height: 15px !important;
+    margin: 0 !important;
+	padding: 0 !important;
+	background: none !important;
+	border: none 0 !important;
+	position: static !important;
+	vertical-align: baseline !important;
+	overflow: visible !important;
+	width: auto !important;
+	height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+	float: none !important;
+	visibility: visible !important;
+	text-align: left !important;
+    text-transform: none !important;
+	border-collapse: separate !important;
+	border-spacing: 2px !important;
+    box-sizing: content-box !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+    letter-spacing: normal !important;
+    -webkit-filter: none !important;
+    -moz-filter: none !important;
+    filter: none !important;
+}
+#lleo_dialog *:before,
+#lleo_dialog *:after {
+    content: '';
+}
+
+#lleo_dialog iframe {
+	height: 0 !important;
+	width: 0 !important;
+}
+
+#lleo_dialog {
+    position: absolute !important;
+    background: #fff !important;
+    border: solid 1px #ccc !important;
+    padding: 7px 0 0 !important;
+    left: -999px;
+    top: -999px;
+    width: 440px !important;
+    overflow: hidden;
+    display: block !important;
+    z-index: 999999999 !important;
+    box-shadow: 8px 16px 30px rgba(0, 0, 0, 0.16) !important;
+    border-radius: 3px !important;
+    opacity: 0 !important;
+    -webkit-transform: translateY(15px);
+    -moz-transform: translateY(15px);
+    -ms-transform: translateY(15px);
+    -o-transform: translateY(15px);
+    transform: translateY(15px);
+}
+#lleo_dialog.lleo_show_small {
+    width: 150px !important;
+}
+#lleo_dialog.lleo_show {
+    opacity: 1 !important;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.3s !important;
+    -moz-transition: -moz-transform 0.3s, opacity 0.3s !important;
+    -ms-transition: -ms-transform 0.3s, opacity 0.3s !important;
+    -o-transition: -o-transform 0.3s, opacity 0.3s !important;
+    transition: transform 0.3s, opacity 0.3s !important;
+}
+#lleo_dialog.lleo_collapse {
+    opacity: 0 !important;
+    -webkit-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -moz-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -ms-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -o-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -webkit-transition: -webkit-transform 0.4s, opacity 0.4s !important;
+    -moz-transition: -moz-transform 0.4s, opacity 0.4s !important;
+    -ms-transition: -ms-transform 0.4s, opacity 0.4s !important;
+    -o-transition: -o-transform 0.4s, opacity 0.4s !important;
+    transition: transform 0.4s, opacity 0.4s !important;
+}
+#lleo_dialog input::-webkit-input-placeholder {
+    color: #aaa !important;
+}
+#lleo_dialog .lleo_has_pic #lleo_word {
+	margin-right: 80px !important;
+}
+#lleo_dialog #lleo_translationsContainer1 {
+	position: relative !important;
+}
+#lleo_dialog #lleo_translationsContainer2 {
+	padding: 7px 0 0 !important;
+	vertical-align: middle !important;
+}
+#lleo_dialog #lleo_word {
+    color: #000 !important;
+    margin: 0 5px 2px 0 !important;
+    /*float: left !important;*/
+}
+#lleo_dialog .lleo_has_sound #lleo_word {
+    margin-left: 30px !important;
+}
+#lleo_dialog #lleo_text {
+    font-weight: bold !important;
+    color: #d56e00 !important;
+    text-decoration: none !important;
+    cursor: default !important;
+}
+/*
+#lleo_dialog #lleo_text.lleo_known {
+    cursor: pointer !important;
+    text-decoration: underline !important;
+}
+*/
+/*#lleo_dialog #lleo_closeBtn {
+    position: absolute !important;
+    right: 6px !important;
+    top: 5px !important;
+    line-height: 1px !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    font-size: 0 !important;
+    color: #aaa !important;
+    display: block !important;
+	z-index: 9999999999 !important;
+	width: 7px !important;
+	height: 7px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}*/
+
+#lleo_dialog #lleo_optionsBtn {
+    position: absolute !important; 
+    right: 3px !important;
+    top: 5px !important;
+    line-height: 1px !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    font-size: 13px !important;
+    color: #aaa !important;
+    padding: 2px !important;
+	display: none;
+}
+    #lleo_dialog.lleo_optionsShown #lleo_optionsBtn {
+        display: block !important;
+    }
+    #lleo_dialog #lleo_optionsBtn img {
+        width: 12px !important;
+        height: 12px !important;
+    }
+#lleo_dialog #lleo_sound {
+    float: left !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-left: 9px !important;
+    margin-right: 3px !important;
+    background: 0 0 no-repeat !important;
+    cursor: pointer !important;
+    display: none !important;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfNJREFUeNq0U01IVFEU/u57Oo5WhBRIBBptykWLYBa2soWiEKQQEbrSFsGbVRQKQc2iFqGitXqvjQxCoCJCqyI0aBUtZILaJNUuYWYWo8HovJ/707nP94bnz0rxwvfOuefd8517fi5TSuE4i50YwZ3l37ZhNlpgzFkaaM/G9sHF1YskNrT+7l4PjMOcb78t2JL71uxgB+2UlfxHTtq5N94fIOh/88kWgWfl73ZCSQkpeGg3H091JY6dI2S00qA/N3KO3dDUYhFgEmZGurG+w9FqApIHsVM7kaTF9Nhn0r8Q7hPWQgIRuNaH3AMUA4W/Lkdh04cpFS43G0TgxQTvCdMETVAk3KynIHwXZU/ge8XDt7KH9bKLjU0P2zVO5LsEpSejVRJ9UR18EtfqKegovs9R3Q6w9c/H1o4Aa2Jwm1lIvn9RJ4w9RdRRzqcYrpwycCll4Cy1lnkS3Bc6vfBg28v8aRIfI78zhB/1GygROH3jLyyzMQ0zlUZuZBSlKkeLoegGtTjYLcJ8pF+NakHOFC2J6w+f25mxSfWrWFF/ShXVPTGvtN14NNkVnxlYWJkgZEL7/vwKr55lKSVnaGYWkuYgrgG172uUv47+U7fw0EHaJXmalUQy/HqO6lBzEsVjJC4Q8kd6TETQpjuaGOvjv8b/AgwA/ij1XMx58NIAAAAASUVORK5CYII=) !important;
+}
+#lleo_dialog .lleo_has_sound #lleo_sound {
+    display: block !important;
+}
+
+#lleo_dialog #lleo_soundWave {
+    border: solid 5px #4495CC !important;
+    border-radius: 5px !important;
+    position: absolute !important;
+    left: -5px !important;
+    top: -5px !important;
+    right: -5px !important;
+    bottom: -5px !important;
+    z-index: 0 !important;
+    opacity: 0.9 !important;
+    display: none !important;
+}
+    #lleo_dialog #lleo_soundWave.lleo_beforePlaying {
+        display: block !important;
+    }
+    #lleo_dialog #lleo_soundWave.lleo_playing {
+        opacity: 0 !important;
+        border-width: 20px !important;
+        border-radius: 30px !important;
+
+        -webkit-transform: scale(1.07,1.1) !important;
+        -moz-transform: scale(1.07,1.1) !important;
+        -ms-transform: scale(1.07,1.1) !important;
+        transform: scale(1.07,1.1) !important;
+
+        -webkit-transition: all 0.6s !important;
+        -moz-transition: all 0.6s !important;
+        -ms-transition: all 0.6s !important;
+        transition: all 0.6s !important;
+    }
+
+
+#lleo_dialog #lleo_picOuter {
+    position: absolute !important;
+    float: right !important;
+    top: 4px;
+    right: 5px;
+    z-index: 9 !important;
+    display: none !important;
+    width: 100px !important;
+}
+    #lleo_dialog.lleo_optionsShown #lleo_picOuter {
+        right: 25px;
+    }
+#lleo_dialog .lleo_has_pic #lleo_picOuter {
+    display: block !important;
+}
+    #lleo_dialog #lleo_picOuter:hover {
+        width: auto !important;
+        z-index: 11 !important;
+    }
+#lleo_dialog #lleo_pic,
+#lleo_dialog #lleo_picBig {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    border: solid 2px #fff !important;
+    -webkit-border-radius: 2px !important;
+    -moz-border-radius: 2px !important;
+	border-radius: 2px !important;
+    z-index: 1 !important;
+}
+#lleo_dialog #lleo_pic {
+	position: relative !important;
+    border: none !important;
+	width: 30px !important;
+}
+#lleo_dialog #lleo_picBig {
+    box-shadow: -1px 2px 4px rgba(0,0,0,0.3);
+    z-index: 2 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+    #lleo_dialog #lleo_picOuter:hover #lleo_picBig {
+        visibility: visible !important;
+        opacity: 1 !important;
+        -webkit-transition: opacity 0.3s !important;
+        -webkit-transition-delay: 0.3s !important;
+    }
+#lleo_dialog #lleo_transcription {
+    margin: 0 80px 4px 31px !important;
+    color: #aaaaaa !important;
+}
+#lleo_dialog .lleo_no_trans {
+    color: #aaa !important;
+}
+
+#lleo_dialog .ll-translation-counter {
+	float: right !important;
+    font-size: 11px !important;
+    color: #aaa !important;
+    padding: 2px 2px 1px 10px !important;
+}
+
+#lleo_dialog .ll-translation-text {
+	float: left !important;
+	/*width: 80% !important;*/
+}
+
+#lleo_dialog #lleo_trans a {
+    color: #3F669F !important;
+    text-decoration: none !important;
+    text-overflow: ellipsis !important;
+    padding: 1px 4px !important;
+    overflow: hidden !important;
+    float: left !important;
+    width: 320px !important;
+}
+
+#lleo_dialog .ll-translation-item {
+    color: #3F669F !important;
+    border: solid 1px #fff !important;
+    padding: 3px !important;
+    width: 100% !important;
+    float: left !important;
+	-moz-border-radius: 2px !important;
+	-webkit-border-radius: 2px !important;
+	border-radius: 2px !important;
+}
+
+#lleo_dialog .ll-translation-item:hover {
+	border: solid 1px #9FC2C9 !important;
+    background: #EDF4F6 !important;
+	cursor: pointer !important;
+}
+#lleo_dialog .ll-translation-item:hover .ll-translation-counter {
+	color: #83a0a6 !important;
+}
+
+#lleo_dialog .ll-translation-marker {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAWSURBVBhXY7RPm/+fAQkwIXNAbMICAJQ8AkvqWg/SAAAAAElFTkSuQmCC) !important;
+    display: inline-block !important;
+    width: 4px !important;
+    height: 4px !important;
+    margin: 7px 5px 2px 2px !important;
+    float: left !important;
+}
+
+#lleo_dialog #lleo_icons {
+    color: #aaa !important;
+    font-size: 11px !important;
+    background: #f8f8f8 !important;
+    padding: 10px 10px 10px 16px !important;
+}
+#lleo_icons a {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 10px -4px 3px !important;
+    text-decoration: none !important;
+    opacity: 0.5 !important;
+    background: url(data:image/png;base64,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) !important;
+}
+#lleo_icons a:hover {
+    opacity: 1 !important;
+}
+#lleo_icons a.lleo_google     {background-position:-34px 0 !important;}
+#lleo_icons a.lleo_multitran  {background-position:-64px 0 !important;}
+#lleo_icons a.lleo_lingvo     {background-position:-51px 0 !important; width: 12px !important;}
+#lleo_icons a.lleo_dict       {background-position:-17px 0 !important;}
+#lleo_icons a.lleo_linguee    {background-position:-81px 0 !important;}
+#lleo_icons a.lleo_michaelis  {background-position:-98px 0 !important;}
+
+#lleo_dialog #lleo_contextContainer {
+    margin: 0 !important;
+    padding: 3px 15px 8px 10px !important;
+    background: #eee !important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee)) !important;
+    background: -moz-linear-gradient(-90deg, #fff, #eee) !important;
+    border-bottom: solid 1px #ddd !important;
+    border-top-left-radius: 3px !important;
+    border-top-right-radius: 3px !important;
+    display: none !important;
+    overflow: hidden !important;
+}
+#lleo_dialog .lleo_has_context #lleo_contextContainer {
+    display: block !important;
+}
+#lleo_dialog #lleo_context {
+    color: #444 !important;
+    text-shadow: 1px 1px 0 #f4f4f4 !important;
+    line-height: 12px !important;
+    font-size: 11px !important;
+    margin-left: 2px !important;
+}
+#lleo_dialog #lleo_context b {
+    line-height: 12px !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+}
+/*#lleo_dialog #lleo_gBrand {
+    color: #aaa !important;
+    font-size: 10px !important;
+    *//*padding-right: 52px !important;*//*
+    padding-bottom: 14px !important;
+    margin: -3px 4px 0 4px !important;
+    background: left bottom url(data:image/png;base64,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) no-repeat !important;
+    display: inline-block !important;
+    float: right !important;
+}
+#lleo_dialog #lleo_gBrand.hidden {
+    display: none !important;
+}*/
+#lleo_dialog #lleo_translateContextLink {
+    color: #444 !important;
+    text-shadow: 1px 1px 0 #f4f4f4 !important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#ddd)) !important;
+    background: -moz-linear-gradient(-90deg, #f4f4f4, #ddd) !important;
+    border: solid 1px !important;
+    box-shadow: 1px 1px 0 #f6f6f6 !important;
+    border-color: #999 #aaa #aaa #999 !important;
+    -moz-border-radius: 2px !important;
+	-webkit-border-radius: 2px !important;
+	border-radius: 2px !important;
+    padding: 0 3px !important;
+    font-size: 11px !important;
+    text-decoration: none !important;
+    margin: 1px 5px 0 !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+}
+#lleo_dialog #lleo_translateContextLink:hover {
+    background: #f8f8f8 !important;
+}
+#lleo_dialog #lleo_translateContextLink.hidden {
+    visibility: hidden !important;
+}
+
+#lleo_dialog #lleo_setTransForm {
+    display: block !important;
+    margin-top: 3px !important;
+    padding-top: 5px !important;
+    /* Set position and background because the form might be overlapped by an image when no translations */
+    position: relative !important;
+    background: #fff !important;
+    z-index: 10 !important;
+    padding-bottom: 10px !important;
+    padding-left: 16px !important;
+}
+#lleo_dialog .lleo-custom-translation {
+    padding: 4px 5px !important;
+    border: solid 1px #ddd !important;
+	border-radius: 2px !important;
+    width: 90% !important;
+    min-width: 270px !important;
+    background: -webkit-gradient(linear, 0 0, 0 20, from(#f1f1f1), to(#fff)) !important;
+    background: -moz-linear-gradient(-90deg, #f1f1f1, #fff) !important;
+	font: normal 13px Arial, Helvetica !important;
+	line-height: 15px !important;
+}
+#lleo_dialog .lleo-custom-translation:hover {
+    border: solid 1px #aaa !important;
+}
+#lleo_dialog .lleo-custom-translation:focus {
+    background: #FFFEC9 !important;
+}
+
+#lleo_dialog *.hidden {
+    display: none !important;
+}
+
+#lleo_dialog .infinitive{
+    color: #D56E00 !important;
+    text-decoration: none;
+    border-bottom: 1px dotted #D56E00 !important;
+}
+#lleo_dialog .infinitive:hover{
+    border: none !important;
+}
+
+#lleo_dialog .lleo_separator {
+    height: 1px !important;
+    background: #eee;
+    margin-top: 10px !important;
+    background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+    background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, #eee 8%, rgba(255,255,255,1) 80%) !important;
+    background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+    background: linear-gradient(to right, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+}
+#lleo_dialog #lleo_trans {
+    /*border-top: 1px solid #eeeeee !important;*/
+    padding: 5px 30px 0 14px !important;
+    zoom: 1;
+}
+
+#lleo_dialog .lleo_clearfix {
+	display: block !important;
+	clear: both !important;
+	visibility: hidden !important;
+	height: 0 !important;
+	font-size: 0 !important;
+}
+
+
+#lleo_dialog #lleo_picOuter table {
+    width: 44px !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    vertical-align: middle !important;
+}
+
+#lleo_dialog #lleo_picOuter td {
+    width: 38px !important;
+    height: 38px !important;
+    /*border: 1px solid #eeeeee !important;*/
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+#lleo_dialog #lleo_picOuter td div {
+	height: 38px !important;
+	overflow: hidden !important;
+}
+
+#lleo_dialog .lleo_empty {
+    margin: 0 5px 7px !important;
+}
+
+#lleo_youtubeExportBtn {
+    margin-left: 10px;
+    height: 24px;
+}
+    #lleo_youtubeExportBtn i {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: 0 0 url(https://d144fqpiyasmrr.cloudfront.net/plugins/all/images/i16.png) !important;
+    }
+    #lleo_youtubeExportBtn .yt-uix-button-content {
+        font-size: 12px;
+        line-height: 2px;
+    }
+
+
+/*** Parsed Lyrics Content *****************************/
+
+.lleo_lyrics tran {
+    background: transparent !important;
+    border-radius: 2px !important;
+    text-shadow: none !important;
+    cursor: pointer !important;
+}
+    .lleo_lyrics tran:hover {
+        color: #fff !important;
+        background: #C77213 !important;
+        -webkit-transition: all 0.1s !important;
+        -moz-transition: all 0.1s !important;
+        -ms-transition: all 0.1s !important;
+        -o-transition: all 0.1s !important;
+        transition: all 0.1s !important;
+    }
+
+.lleo_songName {
+    border: solid 1px #ffd47c;
+    background: #fff1c2;
+    border-radius: 2px;
+}
+
+.lleo_hidden_iframe {
+    visibility: hidden;
+}</style></head>
+
+  <body><style type="text/css">#navbar .nav_panel .tab.tab_print:hover path,#navbar .nav_panel .tab.tab_print:hover text { fill: #86b8d4; } </style>
+    <div id="TMpanel">
+  <div class="container">
+    <div class="menu">
+      <a href="http://tmfeed.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">TM Feed</a>
+      <a href="http://habrahabr.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo" class="current">Хабрахабр</a>
+      <a href="http://megamozg.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Мегамозг</a>
+      <a href="http://geektimes.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Geektimes</a>
+      <a href="https://toster.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Тостер</a>
+      <a href="https://moikrug.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Мой круг</a>
+      <a href="http://freelansim.ru/?utm_source=habrahabr&utm_medium=referral&utm_campaign=mainpage&utm_content=head_link">Фрилансим</a>
+    </div>
+      <div class="menu special"><a href="http://bit.ly/1dVwKFa" target="_blank" style="color: #cb2829">Интерактивные отчеты</a><a href="http://special.habrahabr.ru/microsoft/mobile/?utm_medium=top-menu" target="_blank" style="color: #006b52">Конкурс Lumia 532</a><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=530903&bt=21&pid=2047756&bid=3943728&bn=3943728&rnd=2067053022" target="_blank" style="color: #6D1DD7">Кто быстрее?</a></div>
+  </div>
+</div>
+
+
+    <div id="layout">
+      <div id="navbar_overlay" class="hidden"></div>
+<div id="navbar" class="fixed" style="bottom: 0px;">
+    <div class="nav_panel">
+        <a href="http://habrahabr.ru/" class="logo"></a>
+
+            <a href="http://habrahabr.ru/posts/" class="tab tab_menu" data-tab="menu_tab" title="Меню"><span class="g-icon g-icon-burger"></span></a>
+            <a href="https://habrahabr.ru/auth/login/" class="tab tab_login" id="login" title="Войти"><span class="g-icon g-icon-lock"></span></a>
+
+        <a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=494925&bt=21&pid=1790544&bid=3954066&bn=3954066&rnd=1178078005" class="tab tab_print" id="print_tab" target="_blank" data-post-id="212055"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 571 571" enable-background="new 0 0 571 571" xml:space="preserve">
+<path fill-rule="evenodd" clip-rule="evenodd" fill="#C1C1C1" d="M394.8,175.5c-0.5,11.7-6.9,21.3-15.6,24.3
+	c6.1-4.7,10.2-13.2,10.2-22.9c0-3.6-0.5-6.8-1.5-9.9c-12.5-33.7-44.8-59.6-98.2-59.6c-56.9,0-103.2,44.2-104.3,92.1
+	c-4.6-0.8-9.4-1.2-14.2-1.2c-38.8,0-70.3,27.1-70.3,60.6c0,33.5,22.6,60.1,61.4,60.1l226.8,0.5c0.1,0,0.1,0,0.2,0c0.1,0,0.1,0,0.2,0
+	l2.4,0l0-0.1c49.7-0.7,76.6-22.7,76.6-67.9C468.5,211.2,435.9,178.3,394.8,175.5z"></path>
+<g>
+	<path fill="#C1C1C1" d="M171.9,439c-2.2,1.5-5.1,2.7-8.7,3.3c-3.6,0.7-7.3,1.1-11.1,1.1c-4.5,0-8.8-0.7-12.9-2
+		c-4.1-1.3-7.7-3.5-10.9-6.4c-3.2-2.9-5.7-6.7-7.6-11.3c-1.9-4.6-2.8-10.2-2.8-16.7c0-6.8,1.1-12.5,3.2-17.2
+		c2.1-4.6,4.9-8.4,8.2-11.2c3.3-2.8,7-4.9,11.1-6.2c4.1-1.3,8.1-1.9,12-1.9c4.3,0,8,0.3,11,0.8c3,0.5,5.4,1.2,7.3,1.9l-2.9,12.4
+		c-1.7-0.7-3.6-1.3-5.9-1.6c-2.2-0.3-5-0.5-8.4-0.5c-3,0-5.7,0.5-8.1,1.5c-2.4,1-4.5,2.4-6.2,4.4c-1.7,1.9-3.1,4.4-4.1,7.3
+		c-1,2.9-1.4,6.4-1.4,10.3c0,3.5,0.4,6.6,1.3,9.5c0.9,2.9,2.2,5.3,3.9,7.4c1.7,2.1,3.9,3.7,6.6,4.8c2.7,1.1,5.8,1.7,9.3,1.7
+		c3.3,0,6-0.3,8.2-0.9c2.2-0.6,4.2-1.4,6-2.3L171.9,439z"></path>
+	<path fill="#C1C1C1" d="M234.4,442h-48.2v-70H201v57h33.4V442z"></path>
+	<path fill="#C1C1C1" d="M234.1,407c0-5.7,0.7-10.9,2.2-15.4c1.5-4.5,3.6-8.3,6.3-11.4c2.8-3.1,6.2-5.5,10.2-7.1
+		c4-1.6,8.5-2.5,13.6-2.5c5.4,0,10.1,0.9,14.2,2.7c4,1.8,7.4,4.2,10.1,7.5c2.7,3.2,4.7,7,6.1,11.5c1.4,4.5,2,9.4,2,14.8
+		c0,5.7-0.8,10.9-2.2,15.4c-1.5,4.5-3.7,8.3-6.4,11.4c-2.8,3.1-6.2,5.5-10.2,7.1s-8.5,2.5-13.5,2.5c-5.4,0-10.1-0.9-14.1-2.7
+		c-4-1.8-7.4-4.2-10.1-7.5c-2.7-3.2-4.7-7-6-11.5C234.8,417.3,234.1,412.4,234.1,407z M249.8,407c0,3.5,0.3,6.6,1,9.5
+		c0.7,2.9,1.7,5.3,3,7.4s3.1,3.7,5.2,4.8c2.1,1.1,4.6,1.7,7.4,1.7c5.3,0,9.4-1.8,12.3-5.4s4.4-9.6,4.4-18c0-3.3-0.3-6.4-0.9-9.3
+		c-0.6-2.9-1.6-5.4-2.9-7.5c-1.4-2.1-3.1-3.7-5.2-4.9c-2.1-1.2-4.7-1.8-7.7-1.8c-5.2,0-9.3,1.9-12.2,5.6
+		C251.3,392.9,249.8,398.9,249.8,407z"></path>
+	<path fill="#C1C1C1" d="M355.6,372h14v44.9c0,4.5-0.6,8.5-2,11.8c-1.3,3.3-3.1,6.1-5.5,8.2c-2.4,2.1-5.2,3.7-8.5,4.8
+		c-3.3,1-6.9,1.5-10.8,1.5c-9.4,0-16.6-2-21.5-6.2c-4.9-4.1-7.4-10.2-7.4-18.5V372h14.8v43.9c0,5.3,1.2,9,3.5,11.1
+		c2.3,2.1,5.8,3.2,10.4,3.2c4.4,0,7.7-1.1,9.8-3.4c2.1-2.2,3.2-5.9,3.2-10.9V372z"></path>
+	<path fill="#C1C1C1" d="M387.2,372c1.5-0.2,3.2-0.4,5-0.5c1.9-0.1,3.9-0.2,5.9-0.3c2-0.1,4-0.1,6-0.2c1.9,0,3.7,0,5.2,0
+		c6.7,0,12.4,0.9,17.2,2.7c4.8,1.8,8.7,4.2,11.7,7.3c3,3.1,5.2,6.9,6.6,11.2c1.4,4.3,2.1,9.1,2.1,14.2c0,4.7-0.7,9.2-2,13.6
+		c-1.4,4.4-3.6,8.3-6.7,11.8c-3.1,3.4-7.1,6.2-12,8.2c-4.9,2.1-11,3.1-18.2,3.1c-1.1,0-2.7,0-4.6-0.1c-2-0.1-4-0.2-6.1-0.2
+		c-2.1-0.1-4.1-0.2-5.9-0.3c-1.8-0.1-3.2-0.2-4.2-0.4V372z M410.4,384c-1.5,0-3.1,0-4.7,0c-1.6,0-2.8,0.1-3.7,0.2v45.4
+		c0.3,0.1,0.9,0.1,1.5,0.1c0.7,0,1.4,0.1,2.2,0.1c0.8,0,1.5,0.1,2.2,0.1c0.7,0,1.2,0,1.5,0c4.3,0,7.8-0.7,10.6-2
+		c2.8-1.3,5-3.1,6.6-5.3c1.6-2.2,2.8-4.7,3.5-7.5c0.7-2.8,1-5.7,1-8.7c0-2.5-0.3-5-0.9-7.7c-0.6-2.7-1.7-5.1-3.2-7.3
+		c-1.6-2.2-3.7-4-6.3-5.4C418,384.7,414.6,384,410.4,384z"></path>
+</g>
+</svg></a>
+
+        <a href="http://habrahabr.ru/post/212055/#" class="scroll_to_up scroll_to_up_for_guest" id="scroll_to_top" title="Наверх"></a>
+    </div>
+    <div class="nav_tabs_content ">
+
+        <div class="nav_tab hidden" id="menu_tab">
+            <div class="title">Разделы</div>
+            <form action="http://habrahabr.ru/search/" method="get" class="global_search_form">
+                <div>
+                    <input type="text" name="q" placeholder="Поиск">
+                </div>
+            </form>
+            <div class="menu">
+                <a href="http://habrahabr.ru/posts/top/">Публикации</a>
+                <a href="http://habrahabr.ru/hubs/">Хабы</a>
+                <a href="http://habrahabr.ru/companies/">Компании</a>
+                <a href="http://habrahabr.ru/users/">Пользователи</a>
+                <a href="http://toster.ru/" class="new_window">Q&amp;A</a>
+                <a href="http://habrahabr.ru/sandbox/">Песочница</a>
+
+
+
+            </div>
+
+                
+
+                        <div class="line"></div>
+                        <div class="title">Спецпроекты</div>
+                        <div class="menu">
+
+                        <a href="http://bit.ly/1QLztmW" target="_blank">Shared Hosting</a>
+
+                        <a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=530903&bt=21&pid=2047756&bid=3943277&bn=3943277&rnd=30844056" target="_blank">MAXIFY MB5040</a>
+                        </div>
+
+
+        </div>
+
+
+    </div>
+</div>
+
+      <div class="inner">
+        
+
+        
+
+        
+    <div class="user_header">
+
+	<a class="avatar" href="http://habrahabr.ru/users/nubick/"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-middle.gif" alt="avatar"></a>
+	<h2 class="username"><a href="http://habrahabr.ru/users/nubick/">nubick</a></h2>
+
+
+
+	<div class="karma">
+		<div class="label">карма</div>
+		<div class="score">
+				
+
+				<div class="num">7,0</div>
+
+				
+		</div>
+		<div class="votes">7 голосов</div>
+	</div>
+	<div class="rating">
+		<div class="label">рейтинг</div>
+		<div class="num">0,0</div>
+	</div>
+
+
+	<div class="clear"></div>
+</div>
+
+  <div class="content_left">
+  	
+<table class="menu">
+    <tbody><tr>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/nubick/"><span class="name">Профиль</span></a>
+        </td>
+        <td class="item  active">
+            <a href="http://habrahabr.ru/users/nubick/topics/"><span class="name">Публикации (<span class="count">1</span>)</span></a>
+        </td>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/nubick/comments/"><span class="name">Комментарии (<span class="count">8</span>)</span></a>
+        </td>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/nubick/favorites/"><span class="name">Избранное (<span class="count">14</span>)</span></a>
+        </td>
+    </tr>
+</tbody></table>
+<div class="submenu ">
+
+</div>
+<div class="clear"></div>
+
+
+
+    <div class="post_show">
+  	  
+    <div class="post shortcuts_item" id="post_212055">
+        <div class="published">10 февраля 2014 в 13:28</div>
+        <h1 class="title">
+            
+                <span class="post_title">Методы организации взаимодействия между скриптами в Unity3D</span>
+
+            <a href="http://habrahabr.ru/sandbox/" class="flag flag_sandbox" title="Перейти в песочницу">из песочницы</a>
+
+            
+
+        </h1>
+
+        <div class="hubs">
+		<a href="http://habrahabr.ru/hub/unity3d/" class="hub " title="Вы не подписаны на этот хаб">Unity3D</a><span class="profiled_hub" title="Профильный хаб">*</span>, 
+		<a href="http://habrahabr.ru/hub/gdev/" class="hub " title="Вы не подписаны на этот хаб">Game Development</a><span class="profiled_hub" title="Профильный хаб">*</span>
+</div>
+
+
+        <div class="content html_format">
+            <h4>Вступление</h4><br>
+Даже средний Unity3D проект очень быстро наполняется большим количеством разнообразных скриптов и возникает вопрос взаимодействия этих скриптов друг с другом. <br>
+Данная статья предлагает несколько различных подходов к организации таких взаимодействий от простого до продвинутого и описывает к каким проблемам может привести каждый из подходов, а так же предложит способы решения этих проблем.<br>
+<a name="habracut"></a><br>
+<h4>Подход 1. Назначение через редактор Unity3D</h4><br>
+Пусть у нас в проекте есть два скрипта. Первый скрип отвечает за начисление очков в игре, а второй за пользовательский интерфейс, который, отображает количество набранных очков на экране игры.<br>
+Назовем оба скрипта менеджерами: ScoresManager и HUDManager.<br>
+Каким же образом менеджеру, отвечающему за меню экрана можно получить текущее количество очков от менеджера, отвечающего за начисление очков? <br>
+Предполагается, что в иерархии объектов(Hierarchy) сцены существуют два объекта, на один из которых назначен скрипт ScoresManager, а на другой скрипт HUDManager.<br>
+Один из подходов, содержит следующий принцип: <br>
+В скрипте UIManager определяем переменную типа ScoresManager:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> HUDManager : MonoBehaviour
+{
+    <span class="keyword">public</span> ScoresManager ScoresManager;
+}
+</code></pre><br>
+Но переменную ScoresManager необходимо еще инициализировать экземпляром класса. Для этого выберем в иерархии объектов объект, на который назначен скрипт HUDManager и в настройках объекта увидим переменную ScoresManager со значением None.<br>
+<br>
+<img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/900ef2696d5182d43a87f20483dfe6c1.jpg" alt="image"><br>
+<br>
+Далее, из окна иерархии перетаскиваем объект, содержащий скрипт ScoresManager в область, где написано None и назначаем его объявленной переменной:<br>
+<br>
+<img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/6dc5a7da31258029d78f692b51778e73.jpg" alt="image"><br>
+<br>
+После чего, у нас появляется возможность из кода HUDManager обращаться к скрипту ScoresManager, таким образом:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> HUDManager : MonoBehaviour
+{
+    <span class="keyword">public</span> ScoresManager ScoresManager;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Update ()
+    {
+        ShowScores(ScoresManager.Scores);
+    }
+}
+</code></pre><br>
+Все просто, но игра, не ограничивается одними набранными очками, HUD может отображать текущие жизни игрока, меню доступных действия игрока, информацию о уровне и многое другое. Игра может насчитывать в себе десятки и сотни различных скриптов, которым нужно получать информацию друг от друга.<br>
+Чтобы получить в одном скрипте данные из другого скрипта нам каждый раз придется описывать переменную в одном скрипте и назначать (перетаскивать вручную) ее с помощью редактора, что само по себе нудная работа, которую легко можно забыть сделать и потом долго искать какая из переменных не инициализирована. <br>
+Если мы захотим что-то отрефакторить, переименовать скрипт, то все старые инициализации в иерархии объектов, связанные с переименованным скриптом, сбросятся и придется их назначать снова. <br>
+В то же время, такой механизм не работает для префабов (prefab) — динамического создания объектов из шаблона. Если какому-либо префабу нужно обращаться к менеджеру, расположенному в иерархии объектов, то вы не сможете назначить самому префабу элемент из иерархии, а придется сначала создать объект из префаба и после этого программно присвоить экземпляр менеджера переменной только что созданного объекта. Не нужная работа, не нужный код, дополнительная связанность.<br>
+Следующий подход решает все эти проблемы.<br>
+<br>
+<h4>Подход 2. «Синглтоны»</h4><br>
+Применим упрощенную классификацию возможных скриптов, которые используются при создании игры. Первый тип скриптов: «скрипты-менеджеры», второй: «скрипты-игровые-объекты».<br>
+Основное отличие одних от других в том, что «скрипты-менеджеры» всегда имеют единственный экземпляр в игре, в то время как «скрипты-игровые-объекты» могут иметь количество экземпляров больше единицы.<br>
+<br>
+<h4>Примеры</h4><br>
+Как правило, в единственном экземпляре существуют скрипты, отвечающие за общую логику пользовательского интерфейса, за проигрывание музыки, за отслеживание условий завершения уровня, за управление системой заданий, за отображение спецэффектов и так далее.<br>
+В то же время, скрипты игровых объектов существуют в большом количестве экземпляров: каждая птичка из «Angry Birds» управляется экземпляром скрипта птички со своим уникальным состоянием; для любого юнита в стратегии создается экземпляр скрипта юнита, содержащий его текущее количество жизней, позицию на поле и личную цель; поведение пяти разных иконок обеспечивается различными экземплярами одних и тех же скриптов, отвечающих за это поведение.<br>
+В примере из предыдущего шага скрипты HUDManager и ScoresManager всегда существуют в единственном экземпляре. Для их взаимодействия друг с другом применим паттерн «синглтон» (Singleton, он же одиночка).<br>
+В классе ScoresManager опишем статическое свойство типа ScoresManager, в котором будет храниться единственный экземпляр менеджера очков:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> ScoresManager : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> ScoresManager Instance { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Scores;
+}
+</code></pre><br>
+Осталось инициализировать свойство Instance экземпляром класса, который создает среда Unity3D. Так как ScoresManager наследник MonoBehaviour, то он участвует в жизненном цикле всех активных скриптов в сцене и во время инициализации скрипта у него вызывается метод Awake. В этот метод мы и поместить код инициализации свойства Instance:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> ScoresManager : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> ScoresManager Instance { <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> Scores;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Awake()
+    {
+        Instance = <span class="keyword">this</span>;
+    }
+}
+</code></pre><br>
+После чего, использовать ScoresManager из других скриптов можно следующим образом:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> HUDManager : MonoBehaviour
+{	
+    <span class="keyword">public</span> <span class="keyword">void</span> Update ()
+    {
+        ShowScores(ScoresManager.Instance.Scores);
+    }
+}
+</code></pre><br>
+Теперь нет необходимости в HUDManager описывать поле типа ScoresManager и назначать его в редакторе Unity3D, любой «скрипт-менеджер» может предоставлять доступ к себе через статическое свойство Instance, которое будет инициализировать в функции Awake.<br>
+<br>
+<h4>Плюсы</h4><br>
+ — нет необходимости описывать поле скрипта и назначать его через редактор Unity3D.<br>
+ — можно смело рефакторить код, если что и отвалится, то компилятор даст знать.<br>
+ — к другим «скриптам-менеджерам» теперь можно обращаться из префабов, через свойство Instance.<br>
+<br>
+<h4>Минусы</h4><br>
+ — подход обеспечивает доступ только к «скриптам-менеджерам», существующим в единственном экземпляре.<br>
+ — сильная связанность. <br>
+На последнем «минусе» остановимся подробнее. <br>
+Пусть мы разрабатываем игру, в которой есть персонажи (unit) и эти персонажи могут погибать (die).<br>
+Где-то находится участок кода, который проверяет не погиб ли наш персонаж:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> Unit : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">int</span> LifePoints;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> TakeDamage(<span class="keyword">int</span> damage)
+    {
+        LifePoints -= damage;
+        <span class="keyword">if</span> (LifePoints &lt;= <span class="number">0</span>)
+            Die();
+    }
+}
+</code></pre><br>
+Каким образом игра может отреагировать на смерть персонажа? Множеством разнообразных реакций! Приведу несколько вариантов:<br>
+ — надо удалить персонажа из сцены игры, чтобы он больше не отображался на ней.<br>
+ — в игре начисляются очки за каждого погибшего персонажа, нужно их начислить и обновить значение на экране.<br>
+ — на специальной панели отображаются все персонажи в игре, где мы можем выбрать конкретного персонажа. При смерти персонажа, нам нужно обновить панель, либо убрать персонажа с нее, либо отобразить что он мертв.<br>
+ — нужно проиграть звуковой эффект смерти персонажа.<br>
+ — нужно проиграть визуальный эффект смерти персонажа (взрыв, брызги крови).<br>
+ — система достижений игры имеет достижение, которое считает общее число убитых персонажей за все время. Нужно добавить к счетчику только что умершего персонажа.<br>
+ — система аналитики игры отправляет на внешний сервер факт смерти персонажа, нам этот факт важен для отслеживания прогресса игрока.<br>
+Учитывая все вышеперечисленное, функция Die может выглядеть следующим образом:<br>
+<br>
+<pre><code class="cs"><span class="keyword">private</span> <span class="keyword">void</span> Die()
+{
+    DeleteFromScene();
+    ScoresManager.Instance.OnUnitDied(<span class="keyword">this</span>);
+    LevelConditionManager.Instance.OnUnitDied(<span class="keyword">this</span>);
+    UnitsPanel.Instance.RemoveUnit(<span class="keyword">this</span>);
+    SoundsManager.Instance.PlayUnitDieSound();
+    EffectsManager.Instance.PlaySmallExplosion();
+    AchivementsManager.Instance.OnUnitDied(<span class="keyword">this</span>);
+    AnaliticsManager.Instance.SendUnitDiedEvent(<span class="keyword">this</span>);
+}
+</code></pre><br>
+Получается, что персонаж после совей смерти должен разослать всем компонентам, которые в ней заинтересованы этот печальный факт, он должен знать о существовании этих компонентов и должен знать, что они им интересуются. Не слишком ли много знаний, для маленького юнита?<br>
+Так как игра, по логике, очень связанная структура, то и события происходящие в других компонентах интересуют третьи, юнит тут ничем не особенный. <br>
+Примеры таких событий (далеко не все):<br>
+ — Условие прохождение уровня зависит от количества набранных очков, набрали 1000 очков – прошли уровень (LevelConditionManager связан с ScoresManager).<br>
+ — Когда набираем 500 очков, достигаем важную стадию прохождения уровня, нужно проиграть веселую мелодию и визуальный эффект (ScoresManager связан с EffectsManager и SoundsManager).<br>
+ — Когда персонаж восстанавливает здоровье, нужно проиграть эффект лечения над картинкой персонажа в панели персонажа (UnitsPanel связан с EffectsManager).<br>
+ — и так далее.<br>
+В результате таких связей мы приходим к картине похожей на следующую, где все про всех все знают:<br>
+<br>
+<img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/example03.jpg" alt="image"><br>
+<br>
+Пример со смертью персонажа немного преувеличен, сообщать о смерти (или другом событии) шести разным компонентам не так часто приходится. Но варианты, когда при каком-то событии в игре, функция, в которой произошло событие, сообщает об этом 2-3 другим компонентам встречается сплошь и рядом по всему коду.<br>
+Следующий подход пытается решает эту проблему.<br>
+<br>
+<h4>Подход 3. Мировой эфир (Event Aggregator)</h4><br>
+Введем специальный компонент «EventAggregator», основная функция которого хранить список событий, происходящих в игре.<br>
+Событие в игре — это функционал, предоставляющий любому другому компоненту возможность как подписаться на себя, так и опубликовать факт совершения этого события. Реализация функционала события может быть любой на вкус разработчика, можно использовать стандартные решения языка или написать свою реализацию.<br>
+Пример простой реализации события из прошлого примера (о смерти юнита):<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> UnitDiedEvent
+{
+<span class="keyword">private</span> <span class="keyword">readonly</span> List&lt;Action&lt;Unit&gt;&gt; _callbacks = <span class="keyword">new</span> List&lt;Action&lt;Unit&gt;&gt;(); 
+
+<span class="keyword">public</span> <span class="keyword">void</span> Subscribe(Action&lt;Unit&gt; callback)
+{
+_callbacks.Add(callback);
+}
+
+<span class="keyword">public</span> <span class="keyword">void</span> Publish(Unit unit)
+{
+<span class="keyword">foreach</span> (Action&lt;Unit&gt; callback <span class="keyword">in</span> _callbacks)
+callback(unit);
+}
+}
+</code></pre><br>
+Добавляем это событие в «EventAggregator»:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> EventAggregator
+{
+        <span class="keyword">public</span> <span class="keyword">static</span> UnitDiedEvent UnitDied;
+}
+</code></pre><br>
+Теперь, функция Die из предыдущего примера с восемью строчками преобразуется в функцию с одной строчкой кода. Нам нет необходимости сообщать о том, что юнит умер всем заинтересованным компонентам и знать о этих заинтересованных. Мы просто публикуем факт свершения события:<br>
+<br>
+<pre><code class="cs"><span class="keyword">private</span> <span class="keyword">void</span> Die()
+{
+EventAggregator.UnitDied.Publish(<span class="keyword">this</span>);
+}
+</code></pre><br>
+А любой компонент, которому интересно это событие, может отреагировать на него следующим образом (на примере менеджера отвечающего за количество набранных очков):<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> ScoresManager : MonoBehaviour
+{
+<span class="keyword">public</span> <span class="keyword">int</span> Scores;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Awake()
+    {
+        EventAggregator.UnitDied.Subscribe(OnUnitDied);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">void</span> OnUnitDied(Unit unit)
+    {
+        Scores += CalculateScores(unit);
+    }	
+}
+</code></pre><br>
+В функции Awake менеджер подписывается на событие и передает делегат, отвечающий за обработку этого события. Сам же обработчик события, принимает в качестве параметра экземпляр умершего юнита и добавляет количество очков в зависимости от типа этого юнита. <br>
+Таким же образом, все другие компоненты, кому интересно событие смерти юнита, могут подписаться на него и обработать, когда событие произойдет. <br>
+В результате, диаграмма связей между компонентами, когда каждая компонента знала друг о друге, превращается в диаграмму, когда компоненты знают только о событиях, которые происходят в игре (только о интересующих их событиях), но им все равно, от куда эти события пришли. Новая диаграмма будет выглядеть следующим образом:<br>
+<br>
+<img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/example04.jpg" alt="image"><br>
+<br>
+Я же люблю другую интерпретацию: представьте, что прямоугольник «EventAggregator» растянулся во все стороны и захватил внутрь себя все остальные прямоугольники, превратившись в границы мира. В моей голове, на этой диаграмме «EventAggregator» вообще отсутствует. «EventAggregator» это просто мир игры, некий «игровой эфир», куда различные части игры кричат «Эй, народ! Юнит такой-то умер!», и все прослушивают эфир и если какое-то из услышанных событий их заинтересует, они на него отреагируют. Таким образом — связей нет, каждый компонент независим.<br>
+Если я компонент и отвечаю за публикацию какого-то события, то я кричу в эфир мол этот умер, этот получил уровень, снаряд врезался в танк. И мне наплевать интересно кому-нибудь об этом. Возможно, никто не слушает это событие сейчас, а может на него подписана сотня других объектов. Меня, как автора события, это ни грамма не волнует, я про них ничего не знаю и знать не хочу.<br>
+Такой подход позволяет легко вводить новый функционал без изменения старого. Допустим, в готовую игру мы решили добавить систему достижений. Мы создаем новую компоненту системы достижений и подписываемся на все интересующие нас события. Никакой другой код не меняется. Не надо ходить по другим компонентам и из них вызывать систему достижений и говорить ей мол и мое событие посчитай пожалуйста. К тому же, все кто публикуют события в мире ничего не знают о системе достижений, даже о факте ее существования.<br>
+<br>
+<h4>Замечание</h4><br>
+Говоря, что никакой другой код не меняется, я конечно немножко лукавлю. Может оказаться так, что систему достижений интересуют события, которые ранее просто не публиковались в игре, потому как ни одну другую систему до этого не интересовали. И в этом случае, нам нужно будет решить какие новые события добавить в игру и кто будет их публиковать. Но в идеальной игре уже все возможные события есть и эфир наполнен ими по полной.<br>
+<br>
+<h4>Плюсы</h4><br>
+ — не связанность компонентов, мне достаточно просто опубликовать событие, а кого оно интересует не имеет значение.<br>
+ — не связанность компонентов, я просто подписываюсь на нужные мне события.<br>
+ — можно добавлять отдельные модули без изменения в существующем функционале.<br>
+<br>
+<h4>Минусы</h4><br>
+ — нужно постоянно описывать новые события и добавлять их в мир.<br>
+ — нарушение функциональной атомарности.<br>
+<br>
+<h4>Последний минус рассмотрим более детально</h4><br>
+Представим, что у нас есть объект «ObjectA», в котором вызывается метод «MethodA». Метод «MethodA», состоит из трех шагов и вызывает внутри себя три других метода, которые выполняют эти шаги последовательно («MethodA1», «MethodA2» и «MethodA3»). Во втором методе «MethodA2» происходит публикация какого-то события. И тут происходит следующее: все кто подписан на это событие начнут его обрабатывать, выполняя какую-то свою логику. В этой логике тоже может произойти публикация других событий, обработка которых также может привести к публикации новых событий и так далее. Дерево публикаций и реакции в отдельных случаях может очень сильно разрастись. Такие длинные цепочки крайне тяжело отлаживать.<br>
+Но самая страшная проблема, которая тут может произойти, это когда одна из веток цепочки приводит обратно в «ObjectA» и начинает обрабатывать событие путем вызова какого-то другого метода «MethodB». Получается, что метод «MethodA» у нас еще не выполнил все шаги, так как был прерван на втором шаге, и содержит сейчас в себе не валидное состояние (в шаге 1 и 2 мы изменили состояние объекта, но последнее изменение из шага 3 еще не сделали) и при этом начинается выполняться «MethodB» в этом же объекте, имея это не валидное состояние. Такие ситуации порождают ошибки, очень сложно отлавливаются, приводят к тому, что надо контролировать порядок вызова методов и публикации событий, когда по логике этого делать нет необходимости и вводят дополнительную сложность, которую хотелось бы избежать.<br>
+<br>
+<h4>Решение</h4><br>
+Решить описанную проблему не сложно, достаточно добавить функционал отложенной реакции на событие. В качестве простой реализации такого функционала мы можем завести хранилище, в которое будем складывать произошедшие события. Когда событие произошло, мы не выполняем его немедленно, а просто сохраняем где-то у себя. И в момент наступления очереди выполнения функционала какой-то компоненты в игре (в методе Update, например) мы проверяем на наличие произошедших событий и выполняем обработку, если есть такие события. <br>
+Таким образом, при выполнении метода «MethodA» не происходит его прерывание, а опубликованное событие все заинтересованные записывают себе в специальное хранилище. И только после того как к заинтересованным подписчикам дойдет очередь, они достанут из хранилища событие и обработают его. В этот момент весь «MethodA» будет завершен и «ObjectA» будет иметь валидное состояние.<br>
+<br>
+<h4>Заключение</h4><br>
+Компьютерная игра это сложная структура с большим количеством компонентов, которые тесно взаимодействуют друг с другом. Можно придумать множество механизмов организации этого взаимодействия, я же предпочитаю механизм, описанный мною, основанный на событиях и к которому я пришел эволюционным путем прохода по всевозможным граблям. Надеюсь кому-нибудь он тоже понравится и моя статья внесет ясность и будет полезной.
+            <div class="clear"></div>
+        </div>
+
+        
+<ul class="tags">
+	<li><a href="http://habrahabr.ru/search/?q=%5Bc%23%5D&target_type=posts" rel="tag">c#</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bgame%20development%5D&target_type=posts" rel="tag">game development</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bunity3d%5D&target_type=posts" rel="tag">unity3d</a></li>
+</ul>
+
+        <div class="infopanel_wrapper">
+	<div class="infopanel " id="infopanel_post_212055">
+
+				<div class="voting   ">
+
+						<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+
+					<div class="mark positive ">
+							<span class="score" title="Всего 17: ↑16 и ↓1">+15</span>
+					</div>
+
+						<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+
+				</div>
+
+		<div class="pageviews" title="Просмотры публикации">30739</div>
+
+		<div class="favorite">
+				<a class="guest" href="http://habrahabr.ru/post/212055/#" onclick="return false;" title="Только зарегистрированные пользователи могут добавлять публикации в избранное"></a>
+		</div>
+		<div class="favs_count" title="Количество пользователей, добавивших публикацию в избранное">187</div>
+
+
+
+
+
+
+
+				<div class="author">
+					<a title="Автор текста" href="http://habrahabr.ru/users/nubick/">nubick</a>
+					<span class="rating" title="рейтинг пользователя">0,0</span>
+						<a href="https://plus.google.com/+OlegAndrushko" class="googleplus_profile" rel="publisher">G+</a>
+				</div>
+
+
+
+			<div class="share">
+				<div class="twitter">
+					<a href="http://twitter.com/intent/tweet?text=%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B+%D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8+%D0%B2%D0%B7%D0%B0%D0%B8%D0%BC%D0%BE%D0%B4%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%B8%D1%8F+%D0%BC%D0%B5%D0%B6%D0%B4%D1%83+%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82%D0%B0%D0%BC%D0%B8+%D0%B2+Unity3D+http://habr.ru/p/212055/+via+%40habrahabr+%23habr" title="Опубликовать ссылку в Twitter" target="_blank"></a>
+				</div>
+				<div class="vkontakte">
+					<a href="https://vk.com/share.php?url=http://habrahabr.ru/post/212055/" title="Опубликовать ссылку во ВКонтакте" onclick="window.open(this.href, &#39;Опубликовать ссылку во Вконтакте&#39;, &#39;width=800,height=300&#39;); return false"></a>
+				</div>
+				<div class="facebook">
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http://habrahabr.ru/post/212055/" title="Опубликовать ссылку в Facebook" onclick="window.open(this.href, &#39;Опубликовать ссылку в Facebook&#39;, &#39;width=640,height=436,toolbar=0,status=0&#39;); return false"></a>
+				</div>
+				<div class="googleplus">
+					<a href="https://plus.google.com/share?url=http://habrahabr.ru/post/212055/" title="Опубликовать ссылку в Google Plus" onclick="window.open(this.href, &#39;Опубликовать ссылку в Google Plus&#39;, &#39;width=800,height=300&#39;); return false"></a>
+				</div>
+			</div>
+
+	</div>
+	<div class="clear"></div>
+</div>
+
+
+
+
+
+    </div>
+    
+    </div>
+
+  	
+  <div id="adriver_banner_132032996"></div>
+
+  <script type="text/javascript">
+      /** Для блоков гугла **/
+      function requireAdsafe(file){
+          var head = document.getElementsByTagName("head")[0];
+          var script = document.createElement('script');
+          script.src = file;
+          script.type = 'text/javascript';
+          head.appendChild(script);
+      }
+
+      function show_inner_banner_block(name, url){
+          if( typeof(name) !== 'undefined'){
+              //$.get('/html/'+name+'/1436891588/', function(html){
+              $.get('http://special.habrahabr.ru/api/htmlblock/'+name+'/', function(html){
+                  $('#adriver_banner_132032996').html(html);
+                  $('.'+name+'_inner_banner').removeClass('hidden');
+                  if( typeof(url) !== 'undefined'){
+                      $('.'+name+'_inner_banner .block_url').attr('href', url);
+                  }
+              }, 'html')
+          }
+      }
+
+        $(function(){
+          var check_scroll_position = function() {
+            var height = $(window).height();
+            var scrollTop = $(window).scrollTop();
+            var scrollBottom = $(window).scrollTop() + height;
+            var blockTop = $('#adriver_banner_132032996').position().top;
+            var show = scrollTop < blockTop && blockTop < scrollBottom;
+
+            if( show ){
+                $( window ).off('scroll', check_scroll_position);
+                $( window ).trigger('show_bn3');
+            }
+          };
+
+
+          $( window ).on('show_bn3', function(){
+            var keyword = '';
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+            var custom = { 4:ar_duo1 };
+                custom[1] = 'unity3d';
+                custom[2] = 'gdev';
+
+            //if (true)
+            //    show_inner_banner_block('raiffaizen2');
+            //else
+                new adriver("adriver_banner_132032996", {sid: 176776, bt: 52, bn: 3, custom: custom, keyword: keyword});
+          });
+
+          $( window ).on('scroll', check_scroll_position);
+          // $( window ).trigger('show_bn3');
+        });
+    </script>
+
+
+
+
+
+      <div class="block_after_post">
+        
+
+
+<div class="similar_posts">
+
+    <h2 class="title">Похожие публикации</h2>
+    <div class="posts_list">
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/251543/">Добавляем MVP в игры на Unity3D</a>&nbsp;<span class="count">(6)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/223295/">Интеграция средств VR в Unity3d</a>&nbsp;<span class="count">(9)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/203752/">Android NDK Game Development Cookbook</a>&nbsp;<span class="count">(24)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/149244/">Клиент-серверное общение в Unity3d</a>&nbsp;<span class="count">(47)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/101145/">HTML5 Audio и Game Development: баги браузеров, проблемы и их решения, идеи</a>&nbsp;<span class="count">(77)</span>
+        </div>
+    </div>
+</div>
+
+
+
+      </div>
+
+  		    <div class="comments_list " id="comments">
+
+        <h2 class="title ">Комментарии (<span id="comments_count">28</span>)
+            
+
+        </h2>
+
+        
+
+            <div class="comment_item" id="comment_7295619">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7295619">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7295619" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/464c86c09c52b129dffafe50637b657e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="username">HomoLuden</a>
+            <time>10 февраля 2014 в 17:31</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7295619" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Я может не увидел по тексту… но зачем синглтон скрещивать с компонентом (MonoBehavior)? <br>
+«Мухи отдельно, а котлеты отдельно.»<br>
+Чем вам чем вас <a href="http://msdn.microsoft.com/en-us/library/ff650316.aspx">обычный мультипоточный синглтон</a> не угодил? Положили его в отдельный каталог (напр., в Helpers, <a href="https://github.com/homoluden/fukami/blob/master/Fukami.Unity3D/Assets/Scripts/Helpers/GenesManager.cs">как я это сделал</a>), добавили пространство имен в скрипт и используйте на здоровье.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7295619">
+        <div class="comment_item" id="comment_7295647">
+
+    <span class="parent_id" data-parent_id="7295619"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7295647">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7295647" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/464c86c09c52b129dffafe50637b657e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="username">HomoLuden</a>
+            <time>10 февраля 2014 в 17:37</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7295647" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7295647" data-parent_id="7295619" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7295619" data-id="7295647" data-parent_id="7295619" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            &gt;&gt; Singleton -&gt; Минусы<br>
+Добавьте тогда уж, что будет, если этот скрипт через редактор навесят на несколько объектов.<br>
+Только не говорите нечто типа «Юзер так делать не будет». Это человеческий фактор.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7295647">
+        <div class="comment_item" id="comment_7297795">
+
+    <span class="parent_id" data-parent_id="7295647"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7297795">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297795" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>11 февраля 2014 в 03:55</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297795" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7297795" data-parent_id="7295647" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7295647" data-id="7297795" data-parent_id="7295647" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Этот факт можно легко отследить добавив в функцию инициализации синглтона проверку на то не был ли он инициализирован ранее и выводить предупреждение в дебаг, к примеру. Таким образом можно немного обезопасить себя от ошибок невнимательности.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297795">
+        <div class="comment_item" id="comment_7299101">
+
+    <span class="parent_id" data-parent_id="7297795"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7299101">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7299101" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/464c86c09c52b129dffafe50637b657e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="username">HomoLuden</a>
+            <time>11 февраля 2014 в 13:56</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7299101" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7299101" data-parent_id="7297795" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7297795" data-id="7299101" data-parent_id="7297795" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Я неуверен, что там под капотом у Unity3D с многопоточностью, но возможно, что MonoBehavior инициализируются асинхронно (быть може на пулле потоков). Тогда есть вероятность, что такой вот синглтон проинициализируется дважды, трижды, стопиццотжды…<br>
+<br>
+&gt;&gt; Этот факт можно легко отследить добавив в функцию инициализации синглтона проверку на то не был ли он инициализирован ранее и выводить предупреждение в дебаг<br>
+<br>
+Вопрос мой, собственно, в том и состоит зачем тогда его вообще наследовать от MonoBehavior? Чтобы потом вот такие костыли наворачивать? Я, видимо, профит некий упускаю из внимания.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7299101">
+        <div class="comment_item" id="comment_7299597">
+
+    <span class="parent_id" data-parent_id="7299101"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7299597">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7299597" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>11 февраля 2014 в 15:51</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7299597" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7299597" data-parent_id="7299101" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7299101" data-id="7299597" data-parent_id="7299101" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            <blockquote>Я неуверен, что там под капотом у Unity3D с многопоточностью, но возможно, что MonoBehavior инициализируются асинхронно (быть може на пулле потоков). Тогда есть вероятность, что такой вот синглтон проинициализируется дважды, трижды, стопиццотжды…</blockquote><br>
+Нет, жизненый цикл MonoBehaviour гарантирует, что методы Awake и Start вызываются в конкретное время и один раз. С жизненым циклом строго и на нем логика игры строится.<br>
+<br>
+<blockquote>Вопрос мой, собственно, в том и состоит зачем тогда его вообще наследовать от MonoBehavior? Чтобы потом вот такие костыли наворачивать? Я, видимо, профит некий упускаю из внимания.</blockquote><br>
+Потому что изначально у нас есть MonoBehaviour. Если мы не будем наследовать класс от него, то класс не будет являться скриптом и не сможет быть добавлен в объект на сцену.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7299597">
+        <div class="comment_item" id="comment_7304295">
+
+    <span class="parent_id" data-parent_id="7299597"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7304295">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7304295" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/solarfly/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/52c50793ebd57528604ce10e43c40e42_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/solarfly/" class="username">solarfly</a>
+            <time>12 февраля 2014 в 20:10<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7304295" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7304295" data-parent_id="7299597" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7299597" data-id="7304295" data-parent_id="7299597" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            &gt;Нет, жизненый цикл MonoBehaviour гарантирует, что методы Awake и Start вызываются в конкретное время и один раз. С жизненым циклом строго и на нем логика игры строится.<br>
+<br>
+Метод Awake и Start вызываются один раз, но не в конкретное время, только когда объект активирован. И никто Вам не гарантирует последовательность их вызовов в различных объектах. Если будет ситуация, когда один объект обращается к другом при инициализации, а того еще нет, придется городить костыли с проверками.<br>
+<br>
+&gt; Потому что изначально у нас есть MonoBehaviour. Если мы не будем наследовать класс от него, то класс не будет являться скриптом и не сможет быть добавлен в объект на сцену.<br>
+<br>
+Я не говорю, что не нужны системы сообщений, синглтоны. Это не нужно в Юнити. Идеология другая. Будете писать движок, — тогда эти вещи пригодятся. Да и Юнити не для больших проектов.<br>
+new НекоторыйКласс, не? Вполне работает и не нужно быть для этого наследником MonoBehaviour. Для синглтона в самый раз.<br>
+<br>
+По поводу эфиров сообщений, синглтонов.<br>
+<br>
+Юнити предоставляет удобную компонентную систему, где перетаскиванием объекта в иерархии, можно сэкономить кучу времени и решить задачу максимально красивым и приемлемым способом для Юнити.<br>
+<br>
+Синглтон — дурной тон. Им пользуются, когда не знают как решить задачу иначе. Вы пишите код для самоподдержки некоторого объекта, контролирующего единственность своего экземпляра. А что будет, когда нужно будет иметь 2 таких объекта, решите сделать свою игру сетевой, например?<br>
+Если хотите сами не путаться в нагромождениях вызовов зависимостей, пишите код так, чтоб объекты минимально знали о существовании других.<br>
+<br>
+SomeClass().Instance().var — вот только в Юнити этого не надо, да и нигде не надо. Если уж не обойтись без синглтона, то прячьте его за статической функцией. Не нужно никому знать, что объект синглтон.<br>
+<br>
+Зачем система сообщений, на отладку которой вы убьете кучу времени, которая будет делать кучу вызовов каждый фрейм, когда количество объектов, которым нужно знать о событии ограничено. Это не win32api. Да и с учетом байткодовости всех таких систем, они будут не особо эффективны, в отличии от того же win32api.<br>
+<br>
+Юнити решил все задачи за Вас и дал Вам среду, где максимально быстро и красиво можно решить задачу. Вся низкоуровневая работа сделана разработчиками Юнити на C++.<br>
+Может Вы еще будете из текстовых файлов грузить конфиги? У меня были когда-то такие мысли, но убедился, что ту же конфигурацию намного быстрее забить в объект на сцене или префаб в удобной среде, чем редактировать файлы.<br>
+<br>
+Пользуйтесь тем, что Вам дал Юнити, и не давайте вредных советов. Если Вашу статью кто-то сочтет авторитетной, то он пойдет по ложному пути. Вы сами это осознаете, и людей за собой поведете.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7304295">
+        <div class="comment_item" id="comment_7304391">
+
+    <span class="parent_id" data-parent_id="7304295"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7304391">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7304391" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>12 февраля 2014 в 21:05</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7304391" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7304391" data-parent_id="7304295" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304295" data-id="7304391" data-parent_id="7304295" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Я прочитал ваш комментарий, но не хочу отвечать на такой тон.<br>
+Ступайте с миром!
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7304391">
+        <div class="comment_item" id="comment_7304397">
+
+    <span class="parent_id" data-parent_id="7304391"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7304397">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7304397" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/solarfly/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/52c50793ebd57528604ce10e43c40e42_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/solarfly/" class="username">solarfly</a>
+            <time>12 февраля 2014 в 21:09</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7304397" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7304397" data-parent_id="7304391" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304391" data-id="7304397" data-parent_id="7304391" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Извините меня. Я хотел бы выслушать ваши аргументы. Просто вижу те же самые грабли, которые встретил сам, наступил много раз, и пошел дальше. Но я не пытался свои заблуждения выставлять в роль руководства.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7304397">
+        <div class="comment_item" id="comment_7304433">
+
+    <span class="parent_id" data-parent_id="7304397"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7304433">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7304433" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>12 февраля 2014 в 21:25</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7304433" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7304433" data-parent_id="7304397" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304397" data-id="7304433" data-parent_id="7304397" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Агрументы по поводу чего?<br>
+Утверждение, что синглтоны дурной звучит для меня странно и как-то категорично. Подозреваю тут дело вкуса, но вкус обсужать не хочу, да и статье не про синглтоны.<br>
+<br>
+Задайте конкретный вопрос, если что-то интересует.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7304433">
+        <div class="comment_item" id="comment_7304675">
+
+    <span class="parent_id" data-parent_id="7304433"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7304675">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7304675" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/solarfly/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/52c50793ebd57528604ce10e43c40e42_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/solarfly/" class="username">solarfly</a>
+            <time>12 февраля 2014 в 22:38</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7304675" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7304675" data-parent_id="7304433" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304433" data-id="7304675" data-parent_id="7304433" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Познакомьтесь с паттернами проектирования. Тогда вы сможете разглядеть их реализацию в Юнити. И тогда поймете, как в Юнити можно получить самый простой, лаконичный и эффективный результат. Существует не только синглтон как паттерн. Есть мнение по поводу частого использования синглтонов, я его тоже разделяю, так как убедился в минусах подобного подхода на своем опыте. Предложенные Вами методы достаточно сложны для парадигмы Юнити, так как задачи можно решить проще, затратив меньше времени на реализацию, отладку и внедрение предлагаемых вами методов.<br>
+<br>
+К чему я это все, я не имел целью Вас оскорблять своим тоном. Вы сами выбираете, будет у Вас проект жизни, которые рискует быть не законченным, либо у Вас будет готовая игра.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7304675">
+        <div class="comment_item" id="comment_7574771">
+
+    <span class="parent_id" data-parent_id="7304675"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7574771">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7574771" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/grimskin/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/fb3ddeb2e5dcaf3bf5e636f9380af1cc_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/grimskin/" class="username">grimskin</a>
+            <time>11 мая 2014 в 23:52</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7574771" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7574771" data-parent_id="7304675" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304675" data-id="7574771" data-parent_id="7304675" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Опишите свой вариант, пожалуйста.<br>
+<br>
+Я вот сейчас только начинаю разбираться с Unity и столкнулся с уже упоминавшейся в комментариях проблемой — подавляющее большинство уроков, туториалов и книг идут по одной схеме — вот мы нарисовали почву, вот мы натыкали деревья и покрасили травку (в книгах главы две могут этим заниматься), вот камера от первого лица… А у меня, например, в мыслях прототип изометрии с непрямым управлением, и мне надо как-то хранить информацию о массивах тайлов пола и стен, отслеживать клики по ним, вести список задач, давать юнитам забирать какую-то задачу себе и при этом не давать другим юнитам в параллели брать задачу, которую кто-то уже занял, но не успел обновить статус задачи. И я пока не могу найти нормального описания реализации подобного взаимодействия.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7574771">
+        <div class="comment_item" id="comment_8202393">
+
+    <span class="parent_id" data-parent_id="7574771"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8202393">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8202393" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/solarfly/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/52c50793ebd57528604ce10e43c40e42_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/solarfly/" class="username">solarfly</a>
+            <time>29 декабря 2014 в 11:29</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_8202393" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8202393" data-parent_id="7574771" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7574771" data-id="8202393" data-parent_id="7574771" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Начните с более простых проектов, которые точно удастся завершить. По ходу дела станет понятно, какие возможности дает Unity, и что Вы можете организовать на их основе. Сможете поиграться с различными вариантами ваших задумок.<br>
+<br>
+Большинство проектов, как известно, не доходят до конца. Да и с каждым проектом будет больше опыта. Сразу не бросайтесь на сложные задачи. Их решение займет много времени. Заодно выработаете свои персональные привычки организации работы в Юнити. Разберите код готовых проектов опытных программистов. Потом через некоторое время будете с удивлением смотреть на свои велосипеды.<br>
+<br>
+А в остальном — обычное программирование. Применимы паттерны и все проверенные временем подходы. Тут уже к среде нет привязки. C# — такой же C# как у MS и не все должно быть MonoBehaviour'ом. Тем более, если некоторым объектам не нужно находиться в мировом пространстве, то им необязательно быть потомками MonoBehaviour'а и получать Update каждый кадр.<br>
+<br>
+Легко можете применить DI, организовать систему сообщений. Слабое связывание позволит переносить наработки между проектами. Задачи повторяются.<br>
+<br>
+Что касается вашего вопроса, то тут не должно быть привязки к среде, языку. Это вопрос архитектуры. И зачастую более сложный вопрос, чем набросать GameObject'ов со скриптами на сцену.<br>
+<br>
+Если ваше мышление не связывает конкретный язык программирования, то ответ надо искать в других местах. Где конкретно тема обсуждается. Можете взглянуть на проекты Soomla, которые, возможно, удовлетворят ваши потребности и легко интегрируются в Unity. Имеют открытый код.<br>
+<br>
+Выбирая между «правильным программированием» и законченным проектом, стоит не упускать из виду возможности Unity. Например, новый UI, позволяет очень быстро на сцену набросать GUI и HUD. Отличный проект и законченный проект не всегда одно и то же. Лучше иметь в магазинах игру, которая приносит деньги, чем не иметь.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8202393">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_8169631">
+
+    <span class="parent_id" data-parent_id="7304295"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169631">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169631" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Qbit/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Qbit/" class="username">Qbit</a>
+            <time> 8 декабря 2014 в 13:40</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_8169631" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8169631" data-parent_id="7304295" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304295" data-id="8169631" data-parent_id="7304295" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            <blockquote>SomeClass().Instance().var — вот только в Юнити этого не надо, да и нигде не надо. Если уж не обойтись без синглтона, то прячьте его за статической функцией. Не нужно никому знать, что объект синглтон.</blockquote><br>
+<br>
+Статические функции увеличивают связность, а передача объектов&nbsp;— уменьшает. В идеале («если уж не обойтись без синглтона»), зависимость от синглтона должна пробрасываться в параметрах конструктора или функций настройки. То есть клиентский код использует синглтон как `_instance.SomeMethod()`, не зная, что _instance&nbsp;— синглтон. Об этом будет знать только внешний код, где осуществляется настройка: `var x = new Client(SomeClass.Instance)`. При необходимости, можно абстрагировать синглтон за интерфейсом, тогда появится возможность протаскивать в клиенты в поле _instance не сам синглтон (логгер, подсистему звуковых эффектов, etc.), а его моки или обёртки. А зависимость от статической функции (а-ля service locator) жёсткая, тяжело отторгается.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169631">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_8202341">
+
+    <span class="parent_id" data-parent_id="7304295"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8202341">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8202341" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/mouse887/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/mouse887/" class="username">mouse887</a>
+            <time>29 декабря 2014 в 10:59</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_8202341" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8202341" data-parent_id="7304295" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7304295" data-id="8202341" data-parent_id="7304295" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            а почему 32api? что в 64х разрядной уже ушли от очереди сообшений? Челове всё правильно правильно описал, в более мение крупном проекте система событий будет хорошим решением.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8202341">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_7297777">
+
+    <span class="parent_id" data-parent_id="7295619"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7297777">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297777" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 2: ↑1 и ↓1">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>11 февраля 2014 в 03:49</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297777" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7297777" data-parent_id="7295619" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7295619" data-id="7297777" data-parent_id="7295619" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            <blockquote>Я может не увидел по тексту… но зачем синглтон скрещивать с компонентом (MonoBehavior)?</blockquote><br>
+Потому что в статье рассказывается о способак взаимодействия именно скриптов Unity (наследников MonoBehviour), которые живут в жизненном цикле сцены и могут использовать в своей логике факты вызовов таких функций как (Awake, Start, Update и множество других).
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297777">
+        <div class="comment_item" id="comment_7299123">
+
+    <span class="parent_id" data-parent_id="7297777"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7299123">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7299123" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/464c86c09c52b129dffafe50637b657e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/HomoLuden/" class="username">HomoLuden</a>
+            <time>11 февраля 2014 в 14:00<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7299123" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7299123" data-parent_id="7297777" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7297777" data-id="7299123" data-parent_id="7297777" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Вы хотите сказать, что скрестили синглтон с MonoBehavior потому, что автор выбрал именно такой заголовок в статье?<br>
+Взаимодействие между скриптами можно было реализовать и без наследования от MonoBehavior. <br>
+<br>
+Вариант с месседжами снимается<br>
+<s>Можно вообще воспользоваться стандартными средствами Unity3D — пробросом сообщений (напр., <a href="http://docs.unity3d.com/Documentation/ScriptReference/GameObject.SendMessageUpwards.html">SendMessageUpward</a>)</s>
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7299123">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_7296093">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7296093">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7296093" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/fogone/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/a04f8b4fcf3ad258e99e607cfb1468c5_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/fogone/" class="username">fogone</a>
+            <time>10 февраля 2014 в 19:12</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7296093" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            А чем плохи встроенные в юнити события (мессаджи: SendMessage и BroadcastMessage)? Документация клянется, что это работает очень быстро.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7296093">
+        <div class="comment_item" id="comment_7296191">
+
+    <span class="parent_id" data-parent_id="7296093"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7296191">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7296191" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Agent_Smith/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/b2946109d5f6187a65ea844257aac78e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/Agent_Smith/" class="username">Agent_Smith</a>
+            <time>10 февраля 2014 в 19:43</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7296191" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7296191" data-parent_id="7296093" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296093" data-id="7296191" data-parent_id="7296093" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Работает только с MonoBehavior, «магические строчки» вместо имени метода не поддающиеся рефакторингу, и ограничение в один параметр. Ну и работает явно медленнее стандартных евентов.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7296191">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_7296287">
+
+    <span class="parent_id" data-parent_id="7296093"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7296287">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7296287" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Igor_Sib/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Igor_Sib/" class="username">Igor_Sib</a>
+            <time>10 февраля 2014 в 20:05</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7296287" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7296287" data-parent_id="7296093" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296093" data-id="7296287" data-parent_id="7296093" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Врёт. У нас были фризы в какие-то моменты времени, искали долго в чём проблема, я потом подумал на SendMessage, переписали без SendMessage — фризы исчезли. Сча очень редко их пользуем.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7296287">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_7297389">
+
+    <span class="parent_id" data-parent_id="7296093"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7297389">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297389" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/wildmandnd/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/17225da489da5e49ec7f38e424dd32a2_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/wildmandnd/" class="username">wildmandnd</a>
+            <time>11 февраля 2014 в 00:35</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297389" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7297389" data-parent_id="7296093" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296093" data-id="7297389" data-parent_id="7296093" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Плохи производительностью, их использовать — табу.<br>
+<br>
+Мы пользуемся Messenger:<br>
+<a href="https://gist.github.com/anonymous/8923677">gist.github.com/anonymous/8923677</a>
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297389">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_7297809">
+
+    <span class="parent_id" data-parent_id="7296093"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7297809">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297809" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>11 февраля 2014 в 04:06</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297809" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7297809" data-parent_id="7296093" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296093" data-id="7297809" data-parent_id="7296093" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Помимо вышеперечисленного хардкода имен методов, ограничения по параметрам и производительности, возникает неоднозначность в случаях, когда объект, у которого вызывается SendMessage содержит в себе много разных скриптов. Нужно думать, контролировать, а вдруг еще какая-то компонента, кроме предпологаемого получателя содержит в себе метод с таким же именем, что будет в таком случае? А если наш объект содержит несколько копий одного скрипта на себе, но с разными параметрами, что будет в таком случае и как контролировать такие вызовы?
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297809">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_7298601">
+
+    <span class="parent_id" data-parent_id="7296093"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7298601">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7298601" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/fogone/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/a04f8b4fcf3ad258e99e607cfb1468c5_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/fogone/" class="username">fogone</a>
+            <time>11 февраля 2014 в 12:00</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7298601" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7298601" data-parent_id="7296093" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296093" data-id="7298601" data-parent_id="7296093" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо всем, кто отписался, очень полезно! 
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7298601">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_7296329">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7296329">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7296329" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Igor_Sib/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Igor_Sib/" class="username">Igor_Sib</a>
+            <time>10 февраля 2014 в 20:16</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7296329" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо за статью, про третий метод не знал, буду впредь использовать.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7296329">
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_7296435">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7296435">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7296435" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Agent_Smith/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/b2946109d5f6187a65ea844257aac78e_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/Agent_Smith/" class="username">Agent_Smith</a>
+            <time>10 февраля 2014 в 20:44</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7296435" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо за статью, как раз таких статей по юнити и не хватает, как прикрутить физику, модельки, UI полно, а вот как заставить это все работать вместе — очень мало. А могли бы вы выложить, например на gist, пример реализации пула евентов.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7296435">
+        <div class="comment_item" id="comment_7297813">
+
+    <span class="parent_id" data-parent_id="7296435"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7297813">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297813" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>11 февраля 2014 в 04:09</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297813" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7297813" data-parent_id="7296435" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7296435" data-id="7297813" data-parent_id="7296435" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Моя текущая реализация (не без недостатков): <a href="https://github.com/nubick/unity-utils/blob/master/sources/Assets/Scripts/Utils/CommandMonoBehaviour.cs">github.com/nubick/unity-utils/blob/master/sources/Assets/Scripts/Utils/CommandMonoBehaviour.cs</a>
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297813">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_7297229">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7297229">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7297229" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 2: ↑1 и ↓1">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Frost47rus/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/72094cbeb25a44aa38d6ab380e63d41f_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/Frost47rus/" class="username">Frost47rus</a>
+            <time>10 февраля 2014 в 23:55<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7297229" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Паттерны проектирования. <br>
+<a href="http://ru.wikipedia.org/wiki/%D0%9D%D0%B0%D0%B1%D0%BB%D1%8E%D0%B4%D0%B0%D1%82%D0%B5%D0%BB%D1%8C_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F)">Наблюдатель</a><br>
+Собственно, проблемы связывания всех компонентов и кода в Unity нет. Проблема в головах тех, кто пытается делать что-то в этом редакторе, не понимая базовых вещей. Отсюда и обвинения в сторону редактора. Отсюда и «дошёл до азов в процессе эволюции». Теория — не ваш враг. Она ваш помощник. И её знание — не трата времени, а сильный инструмент в ваших руках и голове.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7297229">
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_7406225">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="7406225">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7406225" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Charoplet/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/bd4efef7a5a6d7f6d0d9bfbf4db89e4b_small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Charoplet/" class="username">Charoplet</a>
+            <time>15 марта 2014 в 14:53<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7406225" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Извините, но я не понял, чем ваша реализация событий лучше стандартных событий C#? Вы делаете в принципе то же самое, но в вашей реализации приходиться дополнительно реализовывать Event Aggregator, постоянно пополняя его новыми событиями, а при использовании стандартных событий он не нужен.<br>
+Оставлю, пожалуй, ссылку на <a href="https://unity3d.com/learn/tutorials/modules/intermediate/scripting/events">официальный урок</a> по событиям от сайта Unity.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7406225">
+        <div class="comment_item" id="comment_7407205">
+
+    <span class="parent_id" data-parent_id="7406225"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="7407205">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_7407205" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/nubick/" class="avatar"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/nubick/" class="username">nubick</a>
+            <time>16 марта 2014 в 06:44</time>
+
+            <a href="http://habrahabr.ru/post/212055/#comment_7407205" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="7407205" data-parent_id="7406225" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/212055/#comment_7406225" data-id="7407205" data-parent_id="7406225" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Принципиальное отличие от стандартных событий C# в том, что стандартное событие выполняется сразу, а в моей реализации выполнение откладывается до момента, когда MonoBehaviour выполняет свой Update.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_7407205">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+
+
+  					<p class="for_users_only_msg">Только зарегистрированные пользователи могут оставлять комментарии. <a href="https://habrahabr.ru/auth/login/">Войдите</a>, пожалуйста.</p>
+
+
+
+    <div class="block_after_post">
+      
+
+  <div class="live_broadcast">
+    <h2 class="title">Что обсуждают?</h2>
+    <div class="posts_list">
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262543#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Как решать вступительный экзамен в Школу анализа данных Яндекса</a>&nbsp;<span class="count">(33)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262623#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">36 млн запросов в час, 10000+ постоянно работающих клиентов, на одном сервере, nginx+mysql</a>&nbsp;<span class="count">(55)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262549#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Что не так с сэмплированием</a>&nbsp;<span class="count">(1)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262645#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Firefox блокирует плагин Adobe Flash Player</a>&nbsp;<span class="count">(57)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262595#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Сентимент анализ текста</a>&nbsp;<span class="count">(4)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262461#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Выбор между C++ и C#</a>&nbsp;<span class="count">(199)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262529#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Опыт разработки и проектирования на AngularJS</a>&nbsp;<span class="count">(3)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262551#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">О новом push-сервере «1С-Битрикс»</a>&nbsp;<span class="count">(11)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/261891#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Детектируем, разбираем, изучаем, паяем и глушим полицейские радары и лидары</a>&nbsp;<span class="count">(58)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262615#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">iOS Инструменты разработчика</a>&nbsp;<span class="count">(12)</span>
+          </div>
+    </div>
+  </div>
+
+    </div>
+
+  	
+<form action="http://habrahabr.ru/json/favorites/" method="post" id="edit_tags_form" class="hidden">
+  <input type="hidden" name="action" value="add">
+  <input type="hidden" name="ti" value="0">
+  <input type="hidden" name="tt" value="0">
+  <label>Пометьте топик понятными вам метками, если хотите</label>
+  <input type="text" name="tags_string" class="tags_string" autocomplete="off">
+  <div class="description">Метки лучше разделять запятой. Например: <i>общение, социальные сети, myspace.com, подростки, мердок</i></div>
+  <input type="submit" value="Сохранить" class="submit"> или <a href="http://habrahabr.ru/post/212055/#" class="close" onclick="return close_edit_tags()">закрыть</a>
+</form>
+
+
+
+  </div>
+  <div class="sidebar_right">
+  		<div class="banner_300x500">
+    <div id="adriver_banner_1863387959" title="" style="width: 300px; height: 500px; text-align: center; margin: 0px auto;"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&ad=504897&bid=3932072&bt=52&bn=1&pz=0&xpid=CcvNeSkBu0Yi1E1mStiVakXES2fbKU-zS&ref=http:%2f%2fhabrahabr.ru%2fpost%2f212055%2f&custom=1%3Dunity3d%3B2%3Dgdev%3B4%3D5&rleurl=" onclick="adriver(&#39;adriver_banner_1863387959&#39;).sendPixel(&#39;&#39;);" target="_blank"><img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/bn1-ulmart-2.jpg" alt="AdRiver" border="0"></a></div>
+
+    <script type="text/javascript">
+        function show_bn1_block(name, url){
+            console.log('show' + name);
+            if( typeof(name) !== 'undefined'){
+                $.get('/html/'+name+'/1436891588/', function(html){
+                    $('#adriver_banner_1863387959').html(html);
+                    if( typeof(url) !== 'undefined'){
+                        $('.'+name+'_inner_banner .block_url').attr('href', url);
+                    }
+                })
+            }
+        }
+
+        $(function(){
+
+            // конвертирут кириллицу в cp1251
+            // doc: http://www.adriver.ru/doc/edu-n/pub/settargt/standtrgt/scentrgt/scentrgt.html#9
+            function esc(s){
+                for(var i=0,l=s.length,r='';i<l;i++){
+                    var c = s.charCodeAt(i);r += String.fromCharCode(c>1039&&c<1104 ? c-848 : c==1105 ? 184 : c==1025 ? 168 : c);
+                }
+                return r;
+            }
+
+            var keyword = '';
+
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+
+
+
+            var custom = {4:ar_duo1};
+                custom[1] = 'unity3d';
+                custom[2] = 'gdev';
+
+             new adriver("adriver_banner_1863387959", {sid: 176776, bt: 52, bn: 1, custom: custom, keyword: keyword});
+
+
+
+
+            var check_scroll_position10 = function() {
+                var height = $(window).height();
+                var scrollTop = $(window).scrollTop();
+                var blockTop = $('#adriver_banner_1863387959').position().top;
+                var show = scrollTop < (blockTop + 900) && typeof(bn2Showed) != 'undefined';
+                if( show ){
+                    $( window ).off('scroll', check_scroll_position10);
+                    $( window ).trigger('show_bn10');
+                }
+            };
+
+            $( window ).on('show_bn10', function(){
+                $('#adriver_banner_1863387959').html('');
+                var pz = Math.floor(Math.random()*3+1);
+                var uu = new adriver("adriver_banner_1863387959", { sid: 176776, bt: 52, bn: 1, pz: pz});
+                uu.reload();
+            });
+
+            $( window ).on('scroll', check_scroll_position10);
+
+        }());
+
+
+
+
+    </script>
+</div>
+
+  		
+  		
+<div class="block daily_best_posts">
+
+
+  <div class="title">Популярное за сутки</div>
+  <div class="posts_list">
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262623/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">36 млн запросов в час, 10000+ постоянно работающих клиентов, на одном сервере, nginx+mysql</a>&nbsp;<a href="http://habrahabr.ru/post/262623/#comments" class="count">50</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262631/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Билайн вмешивается в трафик пользователей</a>&nbsp;<a href="http://habrahabr.ru/post/262631/#comments" class="count">49</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/yandex/blog/262543/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Как решать вступительный экзамен в Школу анализа данных Яндекса</a>&nbsp;<a href="http://habrahabr.ru/company/yandex/blog/262543/#comments" class="count">32</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/mailru/blog/261871/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">«Под капотом» индексов Postgres</a>&nbsp;<a href="http://habrahabr.ru/company/mailru/blog/261871/#comments" class="count">15</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/261273/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Такие удивительные семафоры</a>&nbsp;
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262615/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">iOS Инструменты разработчика</a>&nbsp;<a href="http://habrahabr.ru/post/262615/#comments" class="count">12</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/infobox/blog/262553/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Обзор российского офисного пакета с открытыми исходными текстами OnlyOffice в InfoboxCloud</a>&nbsp;<a href="http://habrahabr.ru/company/infobox/blog/262553/#comments" class="count">29</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/pentestit/blog/262579/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Взлом сайта и его последствия</a>&nbsp;<a href="http://habrahabr.ru/company/pentestit/blog/262579/#comments" class="count">26</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262555/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">История о том, как я угольный котел автоматизировал</a>&nbsp;<a href="http://habrahabr.ru/post/262555/#comments" class="count">12</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/e-Legion/blog/262575/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Бесплатная онлайн школа Android-разработчиков. Последние дни регистрации</a>&nbsp;<a href="http://habrahabr.ru/company/e-Legion/blog/262575/#comments" class="count">8</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/neuronspace/blog/258937/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Польза 3d-принтеров для медицины и ракетостроения: настольные FDM против промышленного металлического (могут ли 500 зерлингов завалить дарк темплара?)</a>&nbsp;<a href="http://habrahabr.ru/company/neuronspace/blog/258937/#comments" class="count">8</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/papabubadiop/blog/262589/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Японский дурак</a>&nbsp;<a href="http://habrahabr.ru/company/papabubadiop/blog/262589/#comments" class="count">3</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262563/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Эффективное кодирование видео в Linux c Nvidia NVENC: часть 2, дополнительная</a>&nbsp;<a href="http://habrahabr.ru/post/262563/#comments" class="count">5</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262507/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Эффективное кодирование видео в Linux c Nvidia NVENC: часть 1, общая</a>&nbsp;<a href="http://habrahabr.ru/post/262507/#comments" class="count">10</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/realweb/blog/262573/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Мечты об идеальном API или как преодолевались сложности в проекте AdHands</a>&nbsp;<a href="http://habrahabr.ru/company/realweb/blog/262573/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262601/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Преобразование девиации и его использование для определения системы координат по набору расстояний</a>&nbsp;
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/softline/blog/262547/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">IT-атмосфера бизнеса: Google Apps for Work</a>&nbsp;<a href="http://habrahabr.ru/company/softline/blog/262547/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/custis/blog/262605/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Миграция данных из Oracle в PostgreSQL</a>&nbsp;<a href="http://habrahabr.ru/company/custis/blog/262605/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/appodeal/blog/260091/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Freemium в мобильных приложениях. История одной неудачи и одного успеха</a>&nbsp;<a href="http://habrahabr.ru/company/appodeal/blog/260091/#comments" class="count">3</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262613/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Сборщик почты (делаем простые вещи сложно)</a>&nbsp;<a href="http://habrahabr.ru/post/262613/#comments" class="count">3</a>
+      </div>
+  </div>
+  <div class="all"><a href="http://habrahabr.ru/top/">все лучшие</a></div>
+</div>
+
+	    
+
+<div class="block geektimes_top">
+	<a href="http://geektimes.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Лучшее на Geektimes</a>
+	<div class="posts_list">
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253516/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Сигнал с New Horizons об успешном пролете мимо Плутона достиг Земли</a>&nbsp;<a href="http://geektimes.ru/post/253516/#comments" class="count">7</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253474/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">New Horizons сфотографировал Плутон с расстояния в 766000 км</a>&nbsp;<a href="http://geektimes.ru/post/253474/#comments" class="count">15</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253498/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">ЦЕРН подтвердил открытие нового класса частиц — пентакварков</a>&nbsp;<a href="http://geektimes.ru/post/253498/#comments" class="count">10</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253492/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Создателя фильма «Citizenfour: Правда Сноудена», получившего «Оскар», 50 раз задерживали в американских аэропортах</a>&nbsp;<a href="http://geektimes.ru/post/253492/#comments" class="count">17</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253506/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Семь вредных советов начинающему коптероводу</a>&nbsp;<a href="http://geektimes.ru/post/253506/#comments" class="count">15</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253398/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Астрономы зафиксировали в одной из галактик рекордный по мощности всплеск гамма-излучения</a>&nbsp;<a href="http://geektimes.ru/post/253398/#comments" class="count">4</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253450/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Опыт создания командной игры в виртуальной реальности</a>&nbsp;<a href="http://geektimes.ru/post/253450/#comments" class="count">1</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253512/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">В Голландии начинают тестировать пластиковые автодороги</a>&nbsp;<a href="http://geektimes.ru/post/253512/#comments" class="count">21</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253460/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">«Мисс Эргономика» в третьем поколениии – обзор Logitech MX Master</a>&nbsp;<a href="http://geektimes.ru/post/253460/#comments" class="count">49</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253446/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Его величество кэшбэк</a>&nbsp;<a href="http://geektimes.ru/post/253446/#comments" class="count">21</a>
+  		</div>
+	</div>
+	<div class="all"><a href="http://geektimes.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все публикации</a></div>
+</div>
+
+	  	
+
+<div class="block geektimes_top">
+    <a href="http://megamozg.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Лучшее на Мегамозге</a>
+    <div class="posts_list">
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17464/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Как команда технарей свою компанию создавала, сезон 2 (жизнь в кризис)</a>&nbsp;<a href="http://megamozg.ru/post/17464/#comments" class="count">14</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17472/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Идеализм в IT — тормоз в развитии</a>&nbsp;<a href="http://megamozg.ru/post/17472/#comments" class="count">19</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17474/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Войти в IT: «Я писал игры для калькулятора»</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17450/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Фрилансер или берете подработки? Последствия работы с заказчиками и исполнителями без должного оформления</a>&nbsp;<a href="http://megamozg.ru/post/17450/#comments" class="count">18</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17476/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Китайская государственная Tsinghua Unigroup Ltd готовит выкуп американской Micron Technology</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17460/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">SAP будет продавать свои продукты в России за рубли</a>&nbsp;<a href="http://megamozg.ru/post/17460/#comments" class="count">2</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17478/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Новое фотоприложение «ВКонтакте» имеет все шансы выстоять в конкурентной борьбе с Instagram</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17468/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Владимир Путин сделает все цифровые эфирные телеканалы бесплатными</a>&nbsp;<a href="http://megamozg.ru/post/17468/#comments" class="count">9</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17466/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Все, что вы хотели узнать о Cortex – новой группе Twitter по разработкам, связанным с искусственным интеллектом</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17462/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">АКАР и Sostav.ru составили рейтинги крупнейших игроков на российском рынке рекламы без учета интернет-сегмента</a>&nbsp;
+        </div>
+
+    </div>
+    <div class="all"><a href="http://megamozg.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все публикации</a></div>
+</div>
+
+
+  	  
+<div class="block similar_questions">
+	<div class="title">Вопросы по теме</div>
+
+	<div class="posts_list">
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232012">Как изменить язык описания ошибок в браузере?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232000">Вопрос по C# и net framework?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231918">C# работа с WebBrowser без подвисаний формы?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231885">Как получить код нажатой клавиши?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231877">Как запусть программу из службы?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231851">SharpDevelop работает все кроме Build, Debug, проблема с компилятором. Может что-то где-то прописать и настроить надо?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231842">Вылетает исключение в XAML Designer. Иногда вылетает, иногда нет. Подробности в теме с картинками. Сталкивался кто?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231775">Использовать ли UserControl в WPF MVVM?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231768">Почему при tcp соединении постоянно приходит "мусор"?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231764">Что лучше 1С или C#(ASP.NET)?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231758">Динамическая генерация 2D ландшафта, как реализовать?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231696">На чем лучше всего писать современые прикладныи приложения под Windows?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231683">Реально ли запустить Visual Studio как portable?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231472">Практичиское применения гиперболичиских функций?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231414">Как создать паттерн JSON, если неизвестно имя параметра?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231394">Где найти каналы на youtube по С#?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231322">Моделирование в Unity3D, "лепка" объектов на рамках класса Mesh!?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231223">WPF. Как сделать поле для ввода тегов с автокомплитом?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231010">C# Как очистить все cookies в WebBrowser?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/230960">Почему невозможно использовать DCOM объект с учетной записью без прав администратора?</a>
+		</div>
+  </div>
+
+</div>
+
+
+  		<!--  AdRiver code START. Type:AjaxJS Site: habrahabr PZ: 0 BN: 2 -->
+
+<div id="adriver_banner_480931290" class="adbanner"></div>
+
+
+<script type="text/javascript">
+    function show_bn2_block(name, url){
+        if( typeof(name) !== 'undefined'){
+            $.get('/html/'+name+'/1436891588/', function(html){
+                $('#adriver_banner_480931290').html(html);
+                if( typeof(url) !== 'undefined'){
+                    $('.'+name+'_inner_banner .block_url').attr('href', url);
+                }
+            })
+        }
+    }
+
+    $(function(){
+
+        var check_scroll_position = function() {
+            var height = $(window).height();
+            var scrollTop = $(window).scrollTop();
+            var scrollBottom = $(window).scrollTop() + height;
+            var blockTop = $('#adriver_banner_480931290').position().top;
+            var show = scrollTop < blockTop && blockTop < scrollBottom;
+            if( show ){
+                $( window ).off('scroll', check_scroll_position);
+                $( window ).trigger('show_bn2');
+                bn2Showed = true;
+            }
+        };
+
+        $( window ).on('show_bn2', function(){
+            var keyword = '';
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+            var custom = {4:ar_duo1};
+            custom[1] = 'unity3d';
+            custom[2] = 'gdev';
+            new adriver("adriver_banner_480931290", {sid: 176776, bt: 52, bn: 2, custom: custom, keyword: keyword});
+
+        });
+
+        $( window ).on('scroll', check_scroll_position);
+        // $( window ).trigger('show_bn2');
+
+
+    });
+    </script>
+<!--  AdRiver code END  -->
+
+  		
+<div class="block best_company">
+
+		<div class="title">Компания дня <img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/bg_cicle_help.png" class="help-tip"></div>
+
+		<div class="company_info">
+			<div class="name">
+			 <img class="favicon" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/d6004181077d9122d88b3a14e4ec965c_small.png" alt="ESET NOD32" height="16" width="16">
+			 <div class="company_name"><a href="http://habrahabr.ru/company/eset/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;best_company&#39;, &#39;title&#39;); }" class="title">ESET NOD32</a></div>
+			</div>
+
+			<p>Последняя публикация:
+				<a href="http://habrahabr.ru/company/eset/blog/262635/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;best_company&#39;, &#39;post&#39;); }">В Internet Explorer 11 обнаружена уязвимость нулевого дня</a>
+			</p>
+
+			<div class="buttons">
+  			<div id="fans_count">1576 подписчиков</div>
+			</div>
+		</div>
+
+	</div>
+
+
+  		
+  		
+  		
+  </div>
+  <div class="clear"></div>
+
+  <script>
+    // hubs to GA
+      ga('send', 'event', 'Post_view', 'unity3d (Unity3D)',  window.location.pathname + window.location.search);
+      ga('send', 'event', 'Post_view', 'gdev (Game Development)',  window.location.pathname + window.location.search);
+  </script>
+
+
+
+
+        	
+	<div class="rotated_posts">
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/post/257149/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">Фабрика сайтов (Ф.CMS) проиграла суд</a>
+			</div>
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/post/253297/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">Не учите фреймворки, учите архитектуру</a>
+			</div>
+			<div class="rotated_post last">
+				<a href="http://habrahabr.ru/post/250621/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">300 потрясающих бесплатных сервисов</a>
+			</div>
+		<div class="clear"></div>
+	</div>
+
+        <div class="bottom_promo_blocks">
+    <div class="left">
+            
+	<div class="block new_vacanies">
+  <a href="https://moikrug.ru/vacancies" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Мой круг</a>
+  <div class="vacancies">
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000011570" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Менеджер проектов</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019817" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Бизнес-аналитик [Москва]</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000009642" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Веб-разработчик (junior/middle)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019816" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">JavaScript/Coffeescript разработчик (middle)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019812" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Java Developer</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000014240" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">(Senior ((Python Django) full-stack) Developer)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019807" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Менеджер проектов в UX-студию</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000008805" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Senior PHP Developer</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000011378" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">iOS Разработчик</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019799" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Frontend разработчик</a>
+		</div>
+  </div>
+  <div class="all"><a href="https://moikrug.ru/vacancies" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все вакансии</a></div>
+</div>
+
+    </div>
+    <div class="right">
+        
+	<div class="block freelansim">
+	  <a href="http://freelansim.ru/" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim" class="title"></a>
+	  <div class="tasks">
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115919" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Переделать модуль карточки товара для Netcat standart</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115917" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Создание личного кабинета для продажи полюсов ОСАГО</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115909" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Разработка фирменного стиля и дизайн сайта</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115907" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Надстройка на сайт</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115843" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Software Engineer, iOS</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115859" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Дизайн лотерейного сайта</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115591" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Frontend разработка сервиса</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/113749" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Веб-сервис (робот, парсинг)</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115901" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Несколько правок в простом магазине</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115899" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Убрать ошибку на сайте</a>
+				</div>
+
+	  </div>
+	  <div class="all"><a href="http://freelansim.ru/tasks" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">все заказы</a></div>
+	</div>
+
+    </div>
+    <div class="clear"></div>
+</div>
+
+
+
+        <div class="clear"></div>
+
+        <div class="footer_panel">
+          <div id="footer">
+	<dl>
+		<dd><a href="https://habrahabr.ru/auth/login/">Войти</a></dd>
+		<dd><a href="https://habrahabr.ru/auth/register/">Регистрация</a></dd>
+	</dl>
+	<dl>
+		<dt>Разделы</dt>
+		<dd><a href="http://habrahabr.ru/posts/top/">Публикации</a></dd>
+		<dd><a href="http://habrahabr.ru/hubs/">Хабы</a></dd>
+		<dd><a href="http://habrahabr.ru/companies/">Компании</a></dd>
+		<dd><a href="http://habrahabr.ru/users/">Пользователи</a></dd>
+		<dd><a href="http://toster.ru/?_aa=press_anykey">Q&amp;A</a></dd>
+		<dd><a href="http://habrahabr.ru/sandbox/">Песочница</a></dd>
+		
+	</dl>	
+	<dl>
+		<dt>Инфо</dt>
+		<dd><a href="http://habrahabr.ru/info/about/">О сайте</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/rules/">Правила</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/">Помощь</a></dd>
+		<dd><a href="http://habrahabr.ru/info/agreement/">Соглашение</a></dd>
+	</dl>
+	<dl>
+		<dt>Услуги</dt>
+		<dd><a href="http://special.habrahabr.ru/advertising/">Реклама</a></dd>
+        <dd><a href="http://special.habrahabr.ru/">Спецпроекты</a></dd>
+        <dd><a href="http://special.habrahabr.ru/corporate/">Тарифы</a></dd>
+        <dd><a href="http://special.habrahabr.ru/content/">Контент</a></dd>
+        <dd><a href="http://special.habrahabr.ru/workshops/">Семинары</a></dd>
+	</dl>
+	<dl>
+		<dt>Разное</dt>
+		<dd><a href="http://habrahabr.ru/apps/">Приложения</a></dd>
+		<dd><a href="http://habrahabr.ru/special/testdrive/">Тест-драйвы</a></dd>
+		<dd><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=482836&bt=21&pid=1727881&bid=3951078&bn=3951078&rnd=1676524432">Помощь стартапам</a></dd>
+	</dl>
+	<div class="copyright">
+
+		<div class="about">
+			<a href="http://tmtm.ru/">© TM</a>
+			
+			<br><br>
+			<a href="http://habrahabr.ru/feedback/">Служба поддержки</a><br><br>
+                <a href="http://m.habrahabr.ru/post/212055/?mobile=yes">Мобильная версия</a><br><br>
+			
+
+			<div class="social_accounts">
+				<a href="https://twitter.com/habrahabr" class="tw"></a>
+				<a href="https://www.facebook.com/habrahabr.ru" class="fb"></a>
+				<a href="http://vk.com/habr" class="vk"></a>
+				<!-- <a href="" class="gp"></a> //-->
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+
+
+      <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/jquery.cookie.js"></script>
+      <script type="text/javascript">
+        $(document).ready( function(){
+          window.tmidLogin = function(){ return false; };
+          if( $.cookie('tmid_no_check') == undefined ) {
+            var expire = new Date();
+            expire.setMinutes(expire.getMinutes() + 10 );
+            $.cookie('tmid_no_check', 1, { expires: expire } );
+            $.getScript("https://id.tmtm.ru/checklogin/", function(){
+              if( window.tmidLogin() ) {
+
+                  var href = $('#login').attr('href');
+
+                  if( href !== undefined ) {
+                      window.location.href = href;
+                  }
+              }
+            });
+          }
+        });
+      </script>
+
+    <script type="text/javascript">
+  // global vars
+  var g_base_url = 'habrahabr.ru';
+  var g_show_xpanel = false;
+  var g_base_fullurl = 'http://habrahabr.ru/';
+  var g_is_guest = false;
+</script> 
+
+      <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/shortcuts.js"></script>
+
+    <script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/global_footer_main.js"></script>
+
+    	<script type="text/javascript" src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/saved_resource"></script>
+
+    
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter24049213 = new Ya.Metrika({id:24049213,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript>&lt;div&gt;&lt;img src="//mc.yandex.ru/watch/24049213" style="position:absolute; left:-9999px;" alt="" /&gt;&lt;/div&gt;</noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+<!-- adriver counter //-->
+<span style="position:absolute;left:-9999px;bottom:-20px">
+  <img src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/rle.cgi" width="1" height="1" alt="">
+</span>
+<!-- adriver counter end //-->
+
+    <!-- Facebook Pixel Code -->
+<script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+            document,'script','//connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '322477921209238');
+    fbq('track', 'PageView');
+</script>
+<noscript>&lt;img height="1" width="1" style="display:none"
+               src="https://www.facebook.com/tr?id=322477921209238&amp;ev=PageView&amp;noscript=1"
+        /&gt;</noscript>
+<!-- End Facebook Pixel Code -->
+
+    
+
+    <!-- Хабр не резиновый! -->
+  
+
+<div id="tiptip_holder" style="max-width:auto;"><div id="tiptip_arrow"><div id="tiptip_arrow_inner"></div></div><div id="tiptip_content"></div></div><div id="AutocompleteContainter_d2376" style="position: absolute; z-index: 9999; top: 0px; left: 0px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_d2376" style="display: none; width: 300px; max-height: 400px;"></div></div></div><div id="AutocompleteContainter_9f078" style="position: absolute; z-index: 9999; top: 2px; left: 0px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_9f078" style="display: none; width: 300px; max-height: 400px;"></div></div></div><iframe src="./Методы организации взаимодействия между скриптами в Unity3D _ Хабрахабр_files/3.html" style="width: 10px; height: 10px; position: absolute; top: -10000px; left: -10000px;"></iframe></body></html>

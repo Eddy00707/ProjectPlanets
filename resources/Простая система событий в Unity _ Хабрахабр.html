@@ -1,0 +1,2752 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://habrahabr.ru/post/245219/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script async="" src="./Простая система событий в Unity _ Хабрахабр_files/fbevents.js"></script><script type="text/javascript" async="" src="./Простая система событий в Unity _ Хабрахабр_files/watch.js"></script><script async="" src="./Простая система событий в Unity _ Хабрахабр_files/analytics.js"></script>
+    
+    <meta content="width=1024" name="viewport">
+
+
+    <title>Простая система событий в Unity / Хабрахабр</title>
+
+    <meta name="yandex-verification" content="67d46b975fa41645"> <!-- яндекс вебмастер - верификация -->
+
+    <meta name="description" content="
+
+Что это такое, и для чего это нужно?
+Рано или поздно любой проект Unity разрастается большим количеством скриптов и становится трудно держать в голове, какой скрипт с каким связан. С такой...">
+    <meta name="keywords" content="события, c#, unity3d, unity, скрипты, взаимодействие, организация">
+
+    	<meta property="fb:app_id" content="444736788986613"> 
+<meta property="og:type" content="article"> 
+<meta property="og:url" content="http://habrahabr.ru/post/245219/"> 
+<meta property="og:title" content="Простая система событий в Unity">
+	<meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/976/290/510/976290510e7e44860e7964f08ae34850.png">
+	<link rel="image_src" href="./Простая система событий в Unity _ Хабрахабр_files/976290510e7e44860e7964f08ae34850.png"><meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/79f/68c/195/79f68c1957e15c6b1208faf2c8e65e99.png">
+	<link rel="image_src" href="./Простая система событий в Unity _ Хабрахабр_files/79f68c1957e15c6b1208faf2c8e65e99.png"><meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/33b/5a5/040/33b5a50402648b3293eac244b0f229c4.png">
+	<link rel="image_src" href="./Простая система событий в Unity _ Хабрахабр_files/33b5a50402648b3293eac244b0f229c4.png"><meta property="og:image" content="http://habrastorage.org/getpro/habr/post_images/1d9/0c3/7b8/1d90c37b88c5bcbfc57fdfd4c19845fe.png">
+	<link rel="image_src" href="./Простая система событий в Unity _ Хабрахабр_files/1d90c37b88c5bcbfc57fdfd4c19845fe.png">
+	
+<meta property="og:description" content="Что это такое, и для чего это нужно? Рано или поздно любой проект Unity разрастается большим количеством скриптов и становится трудно держать в голове, какой...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@habrahabr">
+	<meta property="al:ios:url" content="habrahabr://post/245219">
+<meta property="al:ios:app_store_id" content="778613673">
+<meta property="al:ios:app_name" content="Habrahabr">
+<meta property="al:android:url" content="habrahabr://post/245219">
+<meta property="al:android:app_name" content="Habrahabr">
+<meta property="al:android:package" content="ru.habrahabr">
+<meta property="al:windows_phone:url" content="habrahabr://post/245219">
+<meta property="al:windows_phone:app_name" content="Habrahabr">
+<meta property="al:windows_phone:app_id" content="460a6bd6-8955-470f-935e-9ea1726a6060">
+	<link rel="canonical" href="./Простая система событий в Unity _ Хабрахабр_files/Простая система событий в Unity _ Хабрахабр.html">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="http://m.habrahabr.ru/post/245219/">
+
+
+
+
+    <link href="http://habrahabr.ru/styles/1436891588/assets/global_main.css" rel="stylesheet" media="all">
+    <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/global_main.js"></script>
+        <link href="http://habrahabr.ru/styles/1436891588/assets/post_common_css.css" rel="stylesheet" media="all">
+    <link href="http://habrahabr.ru/styles/1436891588/users/all.css" rel="stylesheet" media="all">
+
+    <link href="http://habrahabr.ru/styles/1436891588/printer.css" rel="stylesheet" media="print">
+
+    
+    
+
+
+
+
+        <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/post_common_js.js"></script>
+    <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/all.js"></script>
+
+
+      <!-- www.criteo.com/ru -->
+<script type="text/javascript">
+  var crtg_nid="2580";
+  var crtg_cookiename="cto_rtt";
+  var crtg_varname="crtg_content";
+  function crtg_getCookie(c_name){
+    var i,x,y,ARRCookies=document.cookie.split(";");
+    for(i=0;i<ARRCookies.length;i++){
+      x=ARRCookies[i].substr(0,ARRCookies[i].indexOf("="));
+      y=ARRCookies[i].substr(ARRCookies[i].indexOf("=")+1);
+      x=x.replace(/^\s+|\s+$/g,"");
+      if(x==c_name){return unescape(y);}
+    }
+    return'';
+  }
+  var crtg_content = crtg_getCookie(crtg_cookiename);var crtg_rnd=Math.floor(Math.random()*99999999999);
+  var crtg_url=location.protocol+'//rtax.criteo.com/delivery/rta/rta.js?netId='+escape(crtg_nid);crtg_url+='&cookieName='+escape(crtg_cookiename);crtg_url+='&rnd='+crtg_rnd;crtg_url+='&varName=' + escape(crtg_varname);
+  var crtg_script=document.createElement('script');crtg_script.type='text/javascript';crtg_script.src=crtg_url;crtg_script.async=true;
+  if(document.getElementsByTagName("head").length>0)document.getElementsByTagName("head")[0].appendChild(crtg_script);
+  else
+  if(document.getElementsByTagName("body").length>0)document.getElementsByTagName("body")[0].appendChild(crtg_script);
+</script><script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/rta.js" async=""></script>
+      <script>
+        var N = 5;
+        var ar_duo1 = Math.floor(Math.random()*N+1);
+      </script>
+      <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/adriver.core.2.js"></script>
+
+    <link title="Хабрахабр / Комментарии к публикации «Простая система событий в Unity»" type="application/rss+xml" rel="alternate" href="http://habrahabr.ru/rss/post/245219/">
+
+    
+<script type="text/javascript">
+
+    var user_type = "guest";
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-726094-1',  'auto' );
+    ga('create', 'UA-726094-24', 'auto', {'name': 'HGM'});
+
+  ga('require', 'displayfeatures');
+  ga('set', 'dimension1', user_type); // user type - guest/readonly/habrauser
+  //ga('set', 'dimension2', username); // username
+
+
+
+  if(typeof removeUtms === 'undefined') {
+    removeUtms = function(){};
+  }
+  ga('HGM.send', 'pageview');
+  ga('HGM.set', 'dimension1', user_type);
+  ga('HGM.set', 'dimension2', "habrahabr");
+  ga('send', 'pageview', { 'hitCallback': removeUtms });
+
+</script>
+
+
+    <meta content="Хабрахабр" name="apple-mobile-web-app-title">
+<link href="http://habrahabr.ru/images/apple-touch-icon_142x142.png" rel="apple-touch-icon" type="image/png">
+  <style type="text/css">/*.lleo_errorSelection *::-moz-selection,
+.lleo_errorSelection *::selection,
+.lleo_errorSelection *::-webkit-selection {
+    background-color: red !important;
+    color: #fff !important;;
+}*/
+
+#lleo_dialog,
+#lleo_dialog * {
+    color: #000 !important;
+    font: normal 13px Arial, Helvetica !important;
+    line-height: 15px !important;
+    margin: 0 !important;
+	padding: 0 !important;
+	background: none !important;
+	border: none 0 !important;
+	position: static !important;
+	vertical-align: baseline !important;
+	overflow: visible !important;
+	width: auto !important;
+	height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+	float: none !important;
+	visibility: visible !important;
+	text-align: left !important;
+    text-transform: none !important;
+	border-collapse: separate !important;
+	border-spacing: 2px !important;
+    box-sizing: content-box !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+    letter-spacing: normal !important;
+    -webkit-filter: none !important;
+    -moz-filter: none !important;
+    filter: none !important;
+}
+#lleo_dialog *:before,
+#lleo_dialog *:after {
+    content: '';
+}
+
+#lleo_dialog iframe {
+	height: 0 !important;
+	width: 0 !important;
+}
+
+#lleo_dialog {
+    position: absolute !important;
+    background: #fff !important;
+    border: solid 1px #ccc !important;
+    padding: 7px 0 0 !important;
+    left: -999px;
+    top: -999px;
+    width: 440px !important;
+    overflow: hidden;
+    display: block !important;
+    z-index: 999999999 !important;
+    box-shadow: 8px 16px 30px rgba(0, 0, 0, 0.16) !important;
+    border-radius: 3px !important;
+    opacity: 0 !important;
+    -webkit-transform: translateY(15px);
+    -moz-transform: translateY(15px);
+    -ms-transform: translateY(15px);
+    -o-transform: translateY(15px);
+    transform: translateY(15px);
+}
+#lleo_dialog.lleo_show_small {
+    width: 150px !important;
+}
+#lleo_dialog.lleo_show {
+    opacity: 1 !important;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.3s !important;
+    -moz-transition: -moz-transform 0.3s, opacity 0.3s !important;
+    -ms-transition: -ms-transform 0.3s, opacity 0.3s !important;
+    -o-transition: -o-transform 0.3s, opacity 0.3s !important;
+    transition: transform 0.3s, opacity 0.3s !important;
+}
+#lleo_dialog.lleo_collapse {
+    opacity: 0 !important;
+    -webkit-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -moz-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -ms-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -o-transform: scale(0.25, 0.1) translate(-550px, 100px);
+    transform: scale(0.25, 0.1) translate(-550px, 100px);
+    -webkit-transition: -webkit-transform 0.4s, opacity 0.4s !important;
+    -moz-transition: -moz-transform 0.4s, opacity 0.4s !important;
+    -ms-transition: -ms-transform 0.4s, opacity 0.4s !important;
+    -o-transition: -o-transform 0.4s, opacity 0.4s !important;
+    transition: transform 0.4s, opacity 0.4s !important;
+}
+#lleo_dialog input::-webkit-input-placeholder {
+    color: #aaa !important;
+}
+#lleo_dialog .lleo_has_pic #lleo_word {
+	margin-right: 80px !important;
+}
+#lleo_dialog #lleo_translationsContainer1 {
+	position: relative !important;
+}
+#lleo_dialog #lleo_translationsContainer2 {
+	padding: 7px 0 0 !important;
+	vertical-align: middle !important;
+}
+#lleo_dialog #lleo_word {
+    color: #000 !important;
+    margin: 0 5px 2px 0 !important;
+    /*float: left !important;*/
+}
+#lleo_dialog .lleo_has_sound #lleo_word {
+    margin-left: 30px !important;
+}
+#lleo_dialog #lleo_text {
+    font-weight: bold !important;
+    color: #d56e00 !important;
+    text-decoration: none !important;
+    cursor: default !important;
+}
+/*
+#lleo_dialog #lleo_text.lleo_known {
+    cursor: pointer !important;
+    text-decoration: underline !important;
+}
+*/
+/*#lleo_dialog #lleo_closeBtn {
+    position: absolute !important;
+    right: 6px !important;
+    top: 5px !important;
+    line-height: 1px !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    font-size: 0 !important;
+    color: #aaa !important;
+    display: block !important;
+	z-index: 9999999999 !important;
+	width: 7px !important;
+	height: 7px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}*/
+
+#lleo_dialog #lleo_optionsBtn {
+    position: absolute !important; 
+    right: 3px !important;
+    top: 5px !important;
+    line-height: 1px !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    font-size: 13px !important;
+    color: #aaa !important;
+    padding: 2px !important;
+	display: none;
+}
+    #lleo_dialog.lleo_optionsShown #lleo_optionsBtn {
+        display: block !important;
+    }
+    #lleo_dialog #lleo_optionsBtn img {
+        width: 12px !important;
+        height: 12px !important;
+    }
+#lleo_dialog #lleo_sound {
+    float: left !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-left: 9px !important;
+    margin-right: 3px !important;
+    background: 0 0 no-repeat !important;
+    cursor: pointer !important;
+    display: none !important;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfNJREFUeNq0U01IVFEU/u57Oo5WhBRIBBptykWLYBa2soWiEKQQEbrSFsGbVRQKQc2iFqGitXqvjQxCoCJCqyI0aBUtZILaJNUuYWYWo8HovJ/707nP94bnz0rxwvfOuefd8517fi5TSuE4i50YwZ3l37ZhNlpgzFkaaM/G9sHF1YskNrT+7l4PjMOcb78t2JL71uxgB+2UlfxHTtq5N94fIOh/88kWgWfl73ZCSQkpeGg3H091JY6dI2S00qA/N3KO3dDUYhFgEmZGurG+w9FqApIHsVM7kaTF9Nhn0r8Q7hPWQgIRuNaH3AMUA4W/Lkdh04cpFS43G0TgxQTvCdMETVAk3KynIHwXZU/ge8XDt7KH9bKLjU0P2zVO5LsEpSejVRJ9UR18EtfqKegovs9R3Q6w9c/H1o4Aa2Jwm1lIvn9RJ4w9RdRRzqcYrpwycCll4Cy1lnkS3Bc6vfBg28v8aRIfI78zhB/1GygROH3jLyyzMQ0zlUZuZBSlKkeLoegGtTjYLcJ8pF+NakHOFC2J6w+f25mxSfWrWFF/ShXVPTGvtN14NNkVnxlYWJkgZEL7/vwKr55lKSVnaGYWkuYgrgG172uUv47+U7fw0EHaJXmalUQy/HqO6lBzEsVjJC4Q8kd6TETQpjuaGOvjv8b/AgwA/ij1XMx58NIAAAAASUVORK5CYII=) !important;
+}
+#lleo_dialog .lleo_has_sound #lleo_sound {
+    display: block !important;
+}
+
+#lleo_dialog #lleo_soundWave {
+    border: solid 5px #4495CC !important;
+    border-radius: 5px !important;
+    position: absolute !important;
+    left: -5px !important;
+    top: -5px !important;
+    right: -5px !important;
+    bottom: -5px !important;
+    z-index: 0 !important;
+    opacity: 0.9 !important;
+    display: none !important;
+}
+    #lleo_dialog #lleo_soundWave.lleo_beforePlaying {
+        display: block !important;
+    }
+    #lleo_dialog #lleo_soundWave.lleo_playing {
+        opacity: 0 !important;
+        border-width: 20px !important;
+        border-radius: 30px !important;
+
+        -webkit-transform: scale(1.07,1.1) !important;
+        -moz-transform: scale(1.07,1.1) !important;
+        -ms-transform: scale(1.07,1.1) !important;
+        transform: scale(1.07,1.1) !important;
+
+        -webkit-transition: all 0.6s !important;
+        -moz-transition: all 0.6s !important;
+        -ms-transition: all 0.6s !important;
+        transition: all 0.6s !important;
+    }
+
+
+#lleo_dialog #lleo_picOuter {
+    position: absolute !important;
+    float: right !important;
+    top: 4px;
+    right: 5px;
+    z-index: 9 !important;
+    display: none !important;
+    width: 100px !important;
+}
+    #lleo_dialog.lleo_optionsShown #lleo_picOuter {
+        right: 25px;
+    }
+#lleo_dialog .lleo_has_pic #lleo_picOuter {
+    display: block !important;
+}
+    #lleo_dialog #lleo_picOuter:hover {
+        width: auto !important;
+        z-index: 11 !important;
+    }
+#lleo_dialog #lleo_pic,
+#lleo_dialog #lleo_picBig {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    border: solid 2px #fff !important;
+    -webkit-border-radius: 2px !important;
+    -moz-border-radius: 2px !important;
+	border-radius: 2px !important;
+    z-index: 1 !important;
+}
+#lleo_dialog #lleo_pic {
+	position: relative !important;
+    border: none !important;
+	width: 30px !important;
+}
+#lleo_dialog #lleo_picBig {
+    box-shadow: -1px 2px 4px rgba(0,0,0,0.3);
+    z-index: 2 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+    #lleo_dialog #lleo_picOuter:hover #lleo_picBig {
+        visibility: visible !important;
+        opacity: 1 !important;
+        -webkit-transition: opacity 0.3s !important;
+        -webkit-transition-delay: 0.3s !important;
+    }
+#lleo_dialog #lleo_transcription {
+    margin: 0 80px 4px 31px !important;
+    color: #aaaaaa !important;
+}
+#lleo_dialog .lleo_no_trans {
+    color: #aaa !important;
+}
+
+#lleo_dialog .ll-translation-counter {
+	float: right !important;
+    font-size: 11px !important;
+    color: #aaa !important;
+    padding: 2px 2px 1px 10px !important;
+}
+
+#lleo_dialog .ll-translation-text {
+	float: left !important;
+	/*width: 80% !important;*/
+}
+
+#lleo_dialog #lleo_trans a {
+    color: #3F669F !important;
+    text-decoration: none !important;
+    text-overflow: ellipsis !important;
+    padding: 1px 4px !important;
+    overflow: hidden !important;
+    float: left !important;
+    width: 320px !important;
+}
+
+#lleo_dialog .ll-translation-item {
+    color: #3F669F !important;
+    border: solid 1px #fff !important;
+    padding: 3px !important;
+    width: 100% !important;
+    float: left !important;
+	-moz-border-radius: 2px !important;
+	-webkit-border-radius: 2px !important;
+	border-radius: 2px !important;
+}
+
+#lleo_dialog .ll-translation-item:hover {
+	border: solid 1px #9FC2C9 !important;
+    background: #EDF4F6 !important;
+	cursor: pointer !important;
+}
+#lleo_dialog .ll-translation-item:hover .ll-translation-counter {
+	color: #83a0a6 !important;
+}
+
+#lleo_dialog .ll-translation-marker {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAWSURBVBhXY7RPm/+fAQkwIXNAbMICAJQ8AkvqWg/SAAAAAElFTkSuQmCC) !important;
+    display: inline-block !important;
+    width: 4px !important;
+    height: 4px !important;
+    margin: 7px 5px 2px 2px !important;
+    float: left !important;
+}
+
+#lleo_dialog #lleo_icons {
+    color: #aaa !important;
+    font-size: 11px !important;
+    background: #f8f8f8 !important;
+    padding: 10px 10px 10px 16px !important;
+}
+#lleo_icons a {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 10px -4px 3px !important;
+    text-decoration: none !important;
+    opacity: 0.5 !important;
+    background: url(data:image/png;base64,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) !important;
+}
+#lleo_icons a:hover {
+    opacity: 1 !important;
+}
+#lleo_icons a.lleo_google     {background-position:-34px 0 !important;}
+#lleo_icons a.lleo_multitran  {background-position:-64px 0 !important;}
+#lleo_icons a.lleo_lingvo     {background-position:-51px 0 !important; width: 12px !important;}
+#lleo_icons a.lleo_dict       {background-position:-17px 0 !important;}
+#lleo_icons a.lleo_linguee    {background-position:-81px 0 !important;}
+#lleo_icons a.lleo_michaelis  {background-position:-98px 0 !important;}
+
+#lleo_dialog #lleo_contextContainer {
+    margin: 0 !important;
+    padding: 3px 15px 8px 10px !important;
+    background: #eee !important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee)) !important;
+    background: -moz-linear-gradient(-90deg, #fff, #eee) !important;
+    border-bottom: solid 1px #ddd !important;
+    border-top-left-radius: 3px !important;
+    border-top-right-radius: 3px !important;
+    display: none !important;
+    overflow: hidden !important;
+}
+#lleo_dialog .lleo_has_context #lleo_contextContainer {
+    display: block !important;
+}
+#lleo_dialog #lleo_context {
+    color: #444 !important;
+    text-shadow: 1px 1px 0 #f4f4f4 !important;
+    line-height: 12px !important;
+    font-size: 11px !important;
+    margin-left: 2px !important;
+}
+#lleo_dialog #lleo_context b {
+    line-height: 12px !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+}
+/*#lleo_dialog #lleo_gBrand {
+    color: #aaa !important;
+    font-size: 10px !important;
+    *//*padding-right: 52px !important;*//*
+    padding-bottom: 14px !important;
+    margin: -3px 4px 0 4px !important;
+    background: left bottom url(data:image/png;base64,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) no-repeat !important;
+    display: inline-block !important;
+    float: right !important;
+}
+#lleo_dialog #lleo_gBrand.hidden {
+    display: none !important;
+}*/
+#lleo_dialog #lleo_translateContextLink {
+    color: #444 !important;
+    text-shadow: 1px 1px 0 #f4f4f4 !important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#ddd)) !important;
+    background: -moz-linear-gradient(-90deg, #f4f4f4, #ddd) !important;
+    border: solid 1px !important;
+    box-shadow: 1px 1px 0 #f6f6f6 !important;
+    border-color: #999 #aaa #aaa #999 !important;
+    -moz-border-radius: 2px !important;
+	-webkit-border-radius: 2px !important;
+	border-radius: 2px !important;
+    padding: 0 3px !important;
+    font-size: 11px !important;
+    text-decoration: none !important;
+    margin: 1px 5px 0 !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+}
+#lleo_dialog #lleo_translateContextLink:hover {
+    background: #f8f8f8 !important;
+}
+#lleo_dialog #lleo_translateContextLink.hidden {
+    visibility: hidden !important;
+}
+
+#lleo_dialog #lleo_setTransForm {
+    display: block !important;
+    margin-top: 3px !important;
+    padding-top: 5px !important;
+    /* Set position and background because the form might be overlapped by an image when no translations */
+    position: relative !important;
+    background: #fff !important;
+    z-index: 10 !important;
+    padding-bottom: 10px !important;
+    padding-left: 16px !important;
+}
+#lleo_dialog .lleo-custom-translation {
+    padding: 4px 5px !important;
+    border: solid 1px #ddd !important;
+	border-radius: 2px !important;
+    width: 90% !important;
+    min-width: 270px !important;
+    background: -webkit-gradient(linear, 0 0, 0 20, from(#f1f1f1), to(#fff)) !important;
+    background: -moz-linear-gradient(-90deg, #f1f1f1, #fff) !important;
+	font: normal 13px Arial, Helvetica !important;
+	line-height: 15px !important;
+}
+#lleo_dialog .lleo-custom-translation:hover {
+    border: solid 1px #aaa !important;
+}
+#lleo_dialog .lleo-custom-translation:focus {
+    background: #FFFEC9 !important;
+}
+
+#lleo_dialog *.hidden {
+    display: none !important;
+}
+
+#lleo_dialog .infinitive{
+    color: #D56E00 !important;
+    text-decoration: none;
+    border-bottom: 1px dotted #D56E00 !important;
+}
+#lleo_dialog .infinitive:hover{
+    border: none !important;
+}
+
+#lleo_dialog .lleo_separator {
+    height: 1px !important;
+    background: #eee;
+    margin-top: 10px !important;
+    background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+    background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, #eee 8%, rgba(255,255,255,1) 80%) !important;
+    background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+    background: linear-gradient(to right, rgba(255,255,255,1) 0%,#eee 8%,rgba(255,255,255,1) 80%) !important;
+}
+#lleo_dialog #lleo_trans {
+    /*border-top: 1px solid #eeeeee !important;*/
+    padding: 5px 30px 0 14px !important;
+    zoom: 1;
+}
+
+#lleo_dialog .lleo_clearfix {
+	display: block !important;
+	clear: both !important;
+	visibility: hidden !important;
+	height: 0 !important;
+	font-size: 0 !important;
+}
+
+
+#lleo_dialog #lleo_picOuter table {
+    width: 44px !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    vertical-align: middle !important;
+}
+
+#lleo_dialog #lleo_picOuter td {
+    width: 38px !important;
+    height: 38px !important;
+    /*border: 1px solid #eeeeee !important;*/
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+#lleo_dialog #lleo_picOuter td div {
+	height: 38px !important;
+	overflow: hidden !important;
+}
+
+#lleo_dialog .lleo_empty {
+    margin: 0 5px 7px !important;
+}
+
+#lleo_youtubeExportBtn {
+    margin-left: 10px;
+    height: 24px;
+}
+    #lleo_youtubeExportBtn i {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: 0 0 url(https://d144fqpiyasmrr.cloudfront.net/plugins/all/images/i16.png) !important;
+    }
+    #lleo_youtubeExportBtn .yt-uix-button-content {
+        font-size: 12px;
+        line-height: 2px;
+    }
+
+
+/*** Parsed Lyrics Content *****************************/
+
+.lleo_lyrics tran {
+    background: transparent !important;
+    border-radius: 2px !important;
+    text-shadow: none !important;
+    cursor: pointer !important;
+}
+    .lleo_lyrics tran:hover {
+        color: #fff !important;
+        background: #C77213 !important;
+        -webkit-transition: all 0.1s !important;
+        -moz-transition: all 0.1s !important;
+        -ms-transition: all 0.1s !important;
+        -o-transition: all 0.1s !important;
+        transition: all 0.1s !important;
+    }
+
+.lleo_songName {
+    border: solid 1px #ffd47c;
+    background: #fff1c2;
+    border-radius: 2px;
+}
+
+.lleo_hidden_iframe {
+    visibility: hidden;
+}</style></head>
+
+  <body><style type="text/css">#navbar .nav_panel .tab.tab_print:hover path,#navbar .nav_panel .tab.tab_print:hover text { fill: #86b8d4; } </style>
+    <div id="TMpanel">
+  <div class="container">
+    <div class="menu">
+      <a href="http://tmfeed.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">TM Feed</a>
+      <a href="http://habrahabr.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo" class="current">Хабрахабр</a>
+      <a href="http://megamozg.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Мегамозг</a>
+      <a href="http://geektimes.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Geektimes</a>
+      <a href="https://toster.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Тостер</a>
+      <a href="https://moikrug.ru/?utm_source=tm_habrahabr&utm_medium=tm_top_panel&utm_campaign=tm_promo">Мой круг</a>
+      <a href="http://freelansim.ru/?utm_source=habrahabr&utm_medium=referral&utm_campaign=mainpage&utm_content=head_link">Фрилансим</a>
+    </div>
+      <div class="menu special"><a href="http://bit.ly/1dVwKFa" target="_blank" style="color: #cb2829">Интерактивные отчеты</a><a href="http://special.habrahabr.ru/microsoft/mobile/?utm_medium=top-menu" target="_blank" style="color: #006b52">Конкурс Lumia 532</a><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=530903&bt=21&pid=2047756&bid=3943728&bn=3943728&rnd=2067053022" target="_blank" style="color: #6D1DD7">Кто быстрее?</a></div>
+  </div>
+</div>
+
+
+    <div id="layout">
+      <div id="navbar_overlay" class="hidden"></div>
+<div id="navbar" class="fixed" style="bottom: 0px;">
+    <div class="nav_panel">
+        <a href="http://habrahabr.ru/" class="logo"></a>
+
+            <a href="http://habrahabr.ru/posts/" class="tab tab_menu" data-tab="menu_tab" title="Меню"><span class="g-icon g-icon-burger"></span></a>
+            <a href="https://habrahabr.ru/auth/login/" class="tab tab_login" id="login" title="Войти"><span class="g-icon g-icon-lock"></span></a>
+
+        <a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=494925&bt=21&pid=1790544&bid=3954066&bn=3954066&rnd=1178078005" class="tab tab_print" id="print_tab" target="_blank" data-post-id="245219"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 571 571" enable-background="new 0 0 571 571" xml:space="preserve">
+<path fill-rule="evenodd" clip-rule="evenodd" fill="#C1C1C1" d="M394.8,175.5c-0.5,11.7-6.9,21.3-15.6,24.3
+	c6.1-4.7,10.2-13.2,10.2-22.9c0-3.6-0.5-6.8-1.5-9.9c-12.5-33.7-44.8-59.6-98.2-59.6c-56.9,0-103.2,44.2-104.3,92.1
+	c-4.6-0.8-9.4-1.2-14.2-1.2c-38.8,0-70.3,27.1-70.3,60.6c0,33.5,22.6,60.1,61.4,60.1l226.8,0.5c0.1,0,0.1,0,0.2,0c0.1,0,0.1,0,0.2,0
+	l2.4,0l0-0.1c49.7-0.7,76.6-22.7,76.6-67.9C468.5,211.2,435.9,178.3,394.8,175.5z"></path>
+<g>
+	<path fill="#C1C1C1" d="M171.9,439c-2.2,1.5-5.1,2.7-8.7,3.3c-3.6,0.7-7.3,1.1-11.1,1.1c-4.5,0-8.8-0.7-12.9-2
+		c-4.1-1.3-7.7-3.5-10.9-6.4c-3.2-2.9-5.7-6.7-7.6-11.3c-1.9-4.6-2.8-10.2-2.8-16.7c0-6.8,1.1-12.5,3.2-17.2
+		c2.1-4.6,4.9-8.4,8.2-11.2c3.3-2.8,7-4.9,11.1-6.2c4.1-1.3,8.1-1.9,12-1.9c4.3,0,8,0.3,11,0.8c3,0.5,5.4,1.2,7.3,1.9l-2.9,12.4
+		c-1.7-0.7-3.6-1.3-5.9-1.6c-2.2-0.3-5-0.5-8.4-0.5c-3,0-5.7,0.5-8.1,1.5c-2.4,1-4.5,2.4-6.2,4.4c-1.7,1.9-3.1,4.4-4.1,7.3
+		c-1,2.9-1.4,6.4-1.4,10.3c0,3.5,0.4,6.6,1.3,9.5c0.9,2.9,2.2,5.3,3.9,7.4c1.7,2.1,3.9,3.7,6.6,4.8c2.7,1.1,5.8,1.7,9.3,1.7
+		c3.3,0,6-0.3,8.2-0.9c2.2-0.6,4.2-1.4,6-2.3L171.9,439z"></path>
+	<path fill="#C1C1C1" d="M234.4,442h-48.2v-70H201v57h33.4V442z"></path>
+	<path fill="#C1C1C1" d="M234.1,407c0-5.7,0.7-10.9,2.2-15.4c1.5-4.5,3.6-8.3,6.3-11.4c2.8-3.1,6.2-5.5,10.2-7.1
+		c4-1.6,8.5-2.5,13.6-2.5c5.4,0,10.1,0.9,14.2,2.7c4,1.8,7.4,4.2,10.1,7.5c2.7,3.2,4.7,7,6.1,11.5c1.4,4.5,2,9.4,2,14.8
+		c0,5.7-0.8,10.9-2.2,15.4c-1.5,4.5-3.7,8.3-6.4,11.4c-2.8,3.1-6.2,5.5-10.2,7.1s-8.5,2.5-13.5,2.5c-5.4,0-10.1-0.9-14.1-2.7
+		c-4-1.8-7.4-4.2-10.1-7.5c-2.7-3.2-4.7-7-6-11.5C234.8,417.3,234.1,412.4,234.1,407z M249.8,407c0,3.5,0.3,6.6,1,9.5
+		c0.7,2.9,1.7,5.3,3,7.4s3.1,3.7,5.2,4.8c2.1,1.1,4.6,1.7,7.4,1.7c5.3,0,9.4-1.8,12.3-5.4s4.4-9.6,4.4-18c0-3.3-0.3-6.4-0.9-9.3
+		c-0.6-2.9-1.6-5.4-2.9-7.5c-1.4-2.1-3.1-3.7-5.2-4.9c-2.1-1.2-4.7-1.8-7.7-1.8c-5.2,0-9.3,1.9-12.2,5.6
+		C251.3,392.9,249.8,398.9,249.8,407z"></path>
+	<path fill="#C1C1C1" d="M355.6,372h14v44.9c0,4.5-0.6,8.5-2,11.8c-1.3,3.3-3.1,6.1-5.5,8.2c-2.4,2.1-5.2,3.7-8.5,4.8
+		c-3.3,1-6.9,1.5-10.8,1.5c-9.4,0-16.6-2-21.5-6.2c-4.9-4.1-7.4-10.2-7.4-18.5V372h14.8v43.9c0,5.3,1.2,9,3.5,11.1
+		c2.3,2.1,5.8,3.2,10.4,3.2c4.4,0,7.7-1.1,9.8-3.4c2.1-2.2,3.2-5.9,3.2-10.9V372z"></path>
+	<path fill="#C1C1C1" d="M387.2,372c1.5-0.2,3.2-0.4,5-0.5c1.9-0.1,3.9-0.2,5.9-0.3c2-0.1,4-0.1,6-0.2c1.9,0,3.7,0,5.2,0
+		c6.7,0,12.4,0.9,17.2,2.7c4.8,1.8,8.7,4.2,11.7,7.3c3,3.1,5.2,6.9,6.6,11.2c1.4,4.3,2.1,9.1,2.1,14.2c0,4.7-0.7,9.2-2,13.6
+		c-1.4,4.4-3.6,8.3-6.7,11.8c-3.1,3.4-7.1,6.2-12,8.2c-4.9,2.1-11,3.1-18.2,3.1c-1.1,0-2.7,0-4.6-0.1c-2-0.1-4-0.2-6.1-0.2
+		c-2.1-0.1-4.1-0.2-5.9-0.3c-1.8-0.1-3.2-0.2-4.2-0.4V372z M410.4,384c-1.5,0-3.1,0-4.7,0c-1.6,0-2.8,0.1-3.7,0.2v45.4
+		c0.3,0.1,0.9,0.1,1.5,0.1c0.7,0,1.4,0.1,2.2,0.1c0.8,0,1.5,0.1,2.2,0.1c0.7,0,1.2,0,1.5,0c4.3,0,7.8-0.7,10.6-2
+		c2.8-1.3,5-3.1,6.6-5.3c1.6-2.2,2.8-4.7,3.5-7.5c0.7-2.8,1-5.7,1-8.7c0-2.5-0.3-5-0.9-7.7c-0.6-2.7-1.7-5.1-3.2-7.3
+		c-1.6-2.2-3.7-4-6.3-5.4C418,384.7,414.6,384,410.4,384z"></path>
+</g>
+</svg></a>
+
+        <a href="http://habrahabr.ru/post/245219/#" class="scroll_to_up scroll_to_up_for_guest" id="scroll_to_top" title="Наверх"></a>
+    </div>
+    <div class="nav_tabs_content ">
+
+        <div class="nav_tab hidden" id="menu_tab">
+            <div class="title">Разделы</div>
+            <form action="http://habrahabr.ru/search/" method="get" class="global_search_form">
+                <div>
+                    <input type="text" name="q" placeholder="Поиск">
+                </div>
+            </form>
+            <div class="menu">
+                <a href="http://habrahabr.ru/posts/top/">Публикации</a>
+                <a href="http://habrahabr.ru/hubs/">Хабы</a>
+                <a href="http://habrahabr.ru/companies/">Компании</a>
+                <a href="http://habrahabr.ru/users/">Пользователи</a>
+                <a href="http://toster.ru/" class="new_window">Q&amp;A</a>
+                <a href="http://habrahabr.ru/sandbox/">Песочница</a>
+
+
+
+            </div>
+
+                
+
+                        <div class="line"></div>
+                        <div class="title">Спецпроекты</div>
+                        <div class="menu">
+
+                        <a href="http://bit.ly/1QLztmW" target="_blank">Shared Hosting</a>
+
+                        <a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=530903&bt=21&pid=2047756&bid=3943277&bn=3943277&rnd=30844056" target="_blank">MAXIFY MB5040</a>
+                        </div>
+
+
+        </div>
+
+
+    </div>
+</div>
+
+      <div class="inner">
+        
+
+        
+
+        
+    <div class="user_header">
+
+	<a class="avatar" href="http://habrahabr.ru/users/ArXen42/"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544.png" alt="avatar"></a>
+	<h2 class="username"><a href="http://habrahabr.ru/users/ArXen42/">ArXen42</a></h2>
+
+
+
+	<div class="karma">
+		<div class="label">карма</div>
+		<div class="score">
+				
+
+				<div class="num">6,0</div>
+
+				
+		</div>
+		<div class="votes">12 голосов</div>
+	</div>
+	<div class="rating">
+		<div class="label">рейтинг</div>
+		<div class="num">0,0</div>
+	</div>
+
+
+	<div class="clear"></div>
+</div>
+
+  <div class="content_left">
+  	
+<table class="menu">
+    <tbody><tr>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/ArXen42/"><span class="name">Профиль</span></a>
+        </td>
+        <td class="item  active">
+            <a href="http://habrahabr.ru/users/ArXen42/topics/"><span class="name">Публикации (<span class="count">2</span>)</span></a>
+        </td>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/ArXen42/comments/"><span class="name">Комментарии (<span class="count">41</span>)</span></a>
+        </td>
+        <td class="item ">
+            <a href="http://habrahabr.ru/users/ArXen42/favorites/"><span class="name">Избранное (<span class="count">43</span>)</span></a>
+        </td>
+    </tr>
+</tbody></table>
+<div class="submenu ">
+
+</div>
+<div class="clear"></div>
+
+
+
+    <div class="post_show">
+  	  
+    <div class="post shortcuts_item" id="post_245219">
+        <div class="published"> 7 декабря 2014 в 23:31</div>
+        <h1 class="title">
+            
+                <span class="post_title">Простая система событий в Unity</span>
+
+            <a href="http://habrahabr.ru/sandbox/" class="flag flag_sandbox" title="Перейти в песочницу">из песочницы</a>
+
+            <span class="flag flag_tutorial" title="Обучающий материал">tutorial</span>
+
+        </h1>
+
+        <div class="hubs">
+		<a href="http://habrahabr.ru/hub/unity3d/" class="hub " title="Вы не подписаны на этот хаб">Unity3D</a><span class="profiled_hub" title="Профильный хаб">*</span>, 
+		<a href="http://habrahabr.ru/hub/csharp/" class="hub " title="Вы не подписаны на этот хаб">C#</a><span class="profiled_hub" title="Профильный хаб">*</span>, 
+		<a href="http://habrahabr.ru/hub/gdev/" class="hub " title="Вы не подписаны на этот хаб">Game Development</a><span class="profiled_hub" title="Профильный хаб">*</span>
+</div>
+
+
+        <div class="content html_format">
+            <img src="./Простая система событий в Unity _ Хабрахабр_files/976290510e7e44860e7964f08ae34850.png" alt="image"><br>
+<br>
+<h4>Что это такое, и для чего это нужно?</h4><br>
+Рано или поздно любой проект Unity разрастается большим количеством скриптов и становится трудно держать в голове, какой скрипт с каким связан. С такой проблемой столкнулся и я. Через некоторое время вышел на публикацию <a href="http://habrahabr.ru/post/212055/">«Методы организации взаимодействия между скриптами в Unity3D „</a>. Меня сразу заинтересовал третий подход “Мировой эфир» (настоятельно рекомендую почитать, отлично показано, зачем это нужно). Он идеально мне подходит, но в той статье указан сложный вариант и я, не обладая большими знаниями программирования, так и не смог понять его. В комментариях заметил упоминания встроенной в язык системы событий. Погуглив, нашел <a href="http://habrahabr.ru/post/213809/">статью</a> про стандартную систему событий в C#. В этом посте я хочу рассказать, как подружить ее и unity, чтобы уберечь форумы и unity answers от похожих вопросов.<br>
+<a name="habracut"></a><br>
+<h4>Суть</h4><br>
+Пусть у нас есть игра — шутер. При нажатии на кнопку прицеливания игрок переходит на шаг, включается камера прицела, выполняется сотня других действий. А при нажатии кнопки стрельбы — создание пули, просчет полета и т.д. Все это выльется в огромную кашу с кучей связей и программировать все это станет очень тяжело (см. картинку в <a href="http://habrahabr.ru/post/212055/">первой статье</a>), особенно если нет точной картины всей логики в голове и на схеме.<br>
+Другой важный момент — для разных платформ управление будет сильно различаться и придется править кучу скриптов, содержащих в себе ввод, и события — один из способов решения этой проблемы.<br>
+С использованием событий схема приобретет такой вид:<br>
+<br>
+<img src="./Простая система событий в Unity _ Хабрахабр_files/79f68c1957e15c6b1208faf2c8e65e99.png" alt="image"><br>
+<br>
+InputAggregator слушает ввод и как только игрок нажал клавишу/тапнул экран, говорит в эфир: «Игрок нажал кнопку Х!». Об этом сразу узнают скрипты, подписанные на это событие (а точнее методы в этих скриптах) и выполняются указанные методы. Причем эти методы могут вызываться разными событиями, например, метод «Умереть» вызывается как при получении критического урона, так и, к примеру, при выходу за границы уровня. <br>
+<br>
+Обратите внимание, что нам не важно, какую клавишу нажал игрок, важно лишь то, что произошло событие. Т.е. для подгонки управления для другой платформы нам не надо лезть в 10 скриптов и все их править, достаточно будет модифицировать InputAggregator. <br>
+<br>
+Зачем нужен EventController — смотрите ниже.<br>
+<br>
+<h4>Как это реализовать?</h4><br>
+Забудем про шутер и пули, давайте поставим себе простую задачу: <br>
+<br>
+Есть две сферы:<br>
+<br>
+<img src="./Простая система событий в Unity _ Хабрахабр_files/33b5a50402648b3293eac244b0f229c4.png" alt="image"><br>
+<br>
+Мы хотим при нажатии кнопки Space сдвинуть левую сферу вверх, а нижнюю — вниз. И если какая-то из них уходит слишком далеко, вернуть их обратно. <br>
+<br>
+Но для начала сделаем только первую часть, без преодоления границ:<br>
+<br>
+<img src="./Простая система событий в Unity _ Хабрахабр_files/1d90c37b88c5bcbfc57fdfd4c19845fe.png" alt="image"><br>
+<br>
+Перво — наперво создадим скрипты сфер, содержащие методы телепортов и повесим их на сферы:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> Sphere1T : MonoBehaviour 
+{
+    <span class="keyword">public</span> <span class="keyword">void</span> TeleportUp()
+    {
+        transform.Translate(Vector3.up);
+    }
+}
+
+</code></pre><br>
+Аналогично для другой сферы.<br>
+<br>
+Создадим скрипт EventController и повесим его куда-нибудь (я повесил на камеру).<br>
+В нем создадим делегат MethodContainer():<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">void</span> MethodContainer();
+</code></pre><br>
+Если очень грубо, делегаты — это указатели на методы или контейнеры методов. Для событий делегат используется как тип и с ним самим ничего делать не надо, поэтому особо вникать в механику делегатов необязательно (но знания лишними не бывают). Важно только знать, что к делегату подходят только методы, соответствующие его сигнатуре. В нашем случае это методы, не возвращающие значений (void) и не имеющие параметров (). Соответственно и методы, вызываемые нашими событиями, должны иметь такой вид.<br>
+<br>
+Ну и создадим в нем линки на наши сферы, в редакторе не забываем указать, какой линк к чему относится (вы должны уже уметь это делать, если читаете эту статью), они нам понадобятся.<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> Sphere1T s1t;
+<span class="keyword">public</span> Sphere2T s2t;
+</code></pre><br>
+<br>
+Теперь создадим скрипт InputAggregator. Создадим в нем событие типа MethodContainer, вызывающее телепорт сфер:<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnTeleportEvent;
+</code></pre><br>
+Т.е. наш делегат мы указываем в качестве типа. Обратите внимание, что создавать линк на EventController не нужно.<br>
+ В методе Update() вызовем наше событие:<br>
+<br>
+<pre><code class="cs"><span class="keyword">void</span> Update()
+    {
+        <span class="keyword">if</span> (Input.GetKeyDown(<span class="string">"space"</span>)) OnTeleportEvent();
+    }
+</code></pre><br>
+Все, теперь если мы нажмем пробел, то активируется событие OnTeleportEvent. Осталось только указать, какие методы он должен вызывать.<br>
+<br>
+Вернемся в EventController и в методе Awake() (вызывается при старте игры, похож на Start()) подпишем на наше событие методы TeleportUp() и TeleportDown(). Делается это при помощи оператора +=:<br>
+<br>
+<pre><code class="cs"><span class="keyword">void</span> Awake()
+    {
+        InputAggregator.OnTeleportEvent += s1t.TeleportUp; <span class="comment">//Обратите внимание, линк на класс (скрипт), содержащий событие, делать не нужно!</span>
+        InputAggregator.OnTeleportEvent += s2t.TeleportDown;
+    }
+</code></pre> <br>
+Готово! Теперь при нажатии пробела вызывается событие OnTeleportEvent, которое вызывает два метода в скриптах на сферах.<br>
+<br>
+Теперь попробуем сделать обработку границ.<br>
+<br>
+В скрипты обеих сфер добавим событие выхода за границы (по одному на каждую):<br>
+<br>
+<pre><code class="cs"> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnAbroadLeft;
+</code></pre><br>
+<pre><code class="cs"> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnAbroadRight;
+</code></pre><br>
+В методах телепортов вызываем событие:<br>
+<br>
+<pre><code class="cs"><span class="keyword">if</span> (transform.position.y &gt; <span class="number">3</span>) OnAbroadLeft(); <span class="comment">//Для правой &lt; -3</span>
+</code></pre><br>
+И добавим методы телепорта назад (можно назвать одними именами):<br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">void</span> ResetPosit()
+    {
+        transform.position = <span class="keyword">new</span> Vector3(-<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">//Для правой сферы (2,0,0)</span>
+    }
+</code></pre><br>
+<br>
+А в Awake() EventController'a подписываемся:<br>
+<br>
+<pre><code class="cs">Sphere1T.OnAbroadLeft += s1t.ResetPosit;
+Sphere2T.OnAbroadRight += s2t.ResetPosit;
+</code></pre><br>
+Все, теперь наши сферы исправно двигаются и не убегают далеко.<br>
+<br>
+<div class="spoiler"><b class="spoiler_title">Важно!</b><div class="spoiler_text">В данном примере наши сферы просто двигались. В реальных проектах объекты имеют привычку уничтожаться/отключаться, если того требует логика игры (например убитый враг). И если не позаботиться о том, чтобы такой объект отписывался от события при своем уничтожении, то будут сыпаться ошибки. Или мертвый враг может внезапно встать и начать стрелять в вас как ни в чем не бывало, ведь он все еще подписан на различные игровые события. Поэтому для таких объектов подписку рекомендуется оформлять в них самих в методе OnEnable(), а отписку (-=) делать в OnDisable() (эти методы вызываются движком при включении/выключении объекта).<br>
+<br>
+Также важно знать, что если на событие никто не подписан, то его вызов повлечет за собой ошибку, поэтому если есть такая вероятность, лучше проверять его на нуль. <br>
+</div></div><br>
+<div class="spoiler"><b class="spoiler_title">Еще раз, полный код всех скриптов</b><div class="spoiler_text"><pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> InputAggregator : MonoBehaviour 
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnTeleportEvent;
+
+    <span class="keyword">void</span> Update()
+    {
+        <span class="keyword">if</span> (Input.GetKeyDown(<span class="string">"space"</span>)) OnTeleportEvent();
+    }
+}
+</code></pre><br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> EventController : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">void</span> MethodContainer();
+
+    <span class="keyword">public</span> Sphere1T s1t;
+    <span class="keyword">public</span> Sphere2T s2t;
+    
+    <span class="keyword">void</span> Awake()
+    {
+        InputAggregator.OnTeleportEvent += s1t.TeleportUp;
+        InputAggregator.OnTeleportEvent += s2t.TeleportDown;
+
+        Sphere1T.OnAbroadLeft += s1t.ResetPosit;
+        Sphere2T.OnAbroadRight += s2t.ResetPosit;
+    }
+    
+    
+}
+</code></pre><br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> Sphere1T : MonoBehaviour 
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnAbroadLeft;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> TeleportUp()
+    {
+        transform.Translate(Vector3.up);
+
+        <span class="keyword">if</span> (transform.position.y &gt; <span class="number">3</span>) OnAbroadLeft();
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ResetPosit()
+    {
+        transform.position = <span class="keyword">new</span> Vector3(-<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>); 
+    }
+}
+</code></pre><br>
+<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> Sphere2T : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> EventController.MethodContainer OnAbroadRight;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> TeleportDown()
+    {
+        transform.Translate(Vector3.down);
+
+        <span class="keyword">if</span> (transform.position.y &lt; -<span class="number">3</span>) OnAbroadRight();
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ResetPosit()
+    {
+        transform.position = <span class="keyword">new</span> Vector3(<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>); 
+    }
+}
+</code></pre><br>
+</div></div><br>
+<br>
+<b>Заключение</b><br>
+Это был простейший пример. Разумеется, для двух сфер воротить события абсолютно не нужно, но когда у вас в проекте больше двадцати скриптов, события приходят на помощь. <div class="spoiler"><b class="spoiler_title">Вот как мне, например</b><div class="spoiler_text"><pre><code class="cs">        InputAggregator_script.OnTrajectoryCall_event += trajectoryScript.DrawTrajectory;
+        InputAggregator_script.OnTrajectoryCall_event += destinationGUIScript.DrawDestinationText;
+        InputAggregator_script.OnTrajectoryCall_event += playerMovScript.RestartMov;
+
+        InputAggregator_script.OnTrajectoryClean_event += trajectoryScript.CleanTrajectory;
+        InputAggregator_script.OnTrajectoryClean_event += destinationGUIScript.DisableDestinationText;
+
+        InputAggregator_script.OnTurnSwitch_event += WorldState_class.ChangeDate;
+        InputAggregator_script.OnTurnSwitch_event += playerMovScript.Mov;
+        InputAggregator_script.OnTurnSwitch_event += dateGUIScript.UpdateDateBar;
+</code></pre><br>
+</div></div><br>
+<br>
+Это только начало, представляете, как было бы сложно делать подобное для десятков скриптов без событий? А тут все аккуратно, видно, что на что подписано.<br>
+<br>
+Надеюсь, статья была полезной, буду рад комментариям и замечаниям. Большое спасибо авторам двух указанных мною в начале статей, без них я сам бы не разобрался. <br>
+<br>
+Хочу выразить благодарность всем пользователям, отписавшимся в комментариях. Благодаря ним статья стала лучше, да и я сам лучше понял события. <br>
+Удачи вам в ваших проектах!<br>
+<br>
+<b>P.S. Небольшое дополнение</b><br>
+У вас наверняка возник вопрос, как вызвать событие из другого скрипта, ведь если попытаться сделать что-нибудь вроде<br>
+<pre><code class="cs">InputAggregator_script.OnTurnSwitch_event();
+</code></pre><br>
+то компилятор выдаст ошибку. Это ограничение можно обойти, если в скрипте, в котором описано событие, создать метод, вызывающий это событие, например<br>
+<pre><code class="cs"> <span class="keyword">public</span> <span class="keyword">void</span> CallOnTurnSwitchEvent() { <span class="keyword">if</span> (OnTurnSwitch_event != <span class="number">0</span>) OnTurnSwitch_event(); }
+</code></pre><br>
+И тогда вызвать это событие из другого класса можно будет банальным<br>
+<pre><code class="cs"><span class="keyword">public</span> InputAggregator link;
+
+<span class="keyword">void</span> SomeMethod()
+{
+     link.CallOnTurnSwitchEvent();
+}
+</code></pre><br>
+Немного массивно по синтаксису, но неудобств почти не добавляет.<br>
+<br>
+<b>P.P.S. Еще одно дополнение</b><br>
+Отвлекаясь от темы, не обязательно создавать скрипты для каждой сферы. В рамках закрепления событий и основ ООП, рекомендую переписать эту задачу так, чтобы для сфер был один скрипт, а событие для перехода за границы было тоже одно. <br>
+Должно получиться что-то вроде этого:<br>
+<div class="spoiler"><b class="spoiler_title">Скрытый текст</b><div class="spoiler_text"> <br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> Sphere_script : MonoBehaviour
+{
+    <span class="keyword">public</span> Transform _transform;
+    <span class="keyword">void</span> Awake() { _transform = GetComponent&lt;Transform&gt;(); } <span class="comment">//Зачем кэшировать Transform читаем http://habrahabr.ru/post/195970/</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> TeleportUp()
+    {
+        _transform.position += <span class="keyword">new</span> Vector3(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> TeleportDown()
+    {
+        _transform.position += <span class="keyword">new</span> Vector3(<span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ReturnToStartLeft() { _transform.position -= <span class="keyword">new</span> Vector3(<span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>); }
+    <span class="keyword">public</span> <span class="keyword">void</span> ReturnToStartRight() { _transform.position += <span class="keyword">new</span> Vector3(<span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>); }
+}
+</code></pre><br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">class</span> EventController : MonoBehaviour
+{
+    <span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">void</span> MethodContainer();
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> MethodContainer OnTeleport_event;
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> MethodContainer OnAbroad_event;
+
+    <span class="keyword">public</span> Sphere_script s1t;
+    <span class="keyword">public</span> Sphere_script s2t;
+
+    <span class="keyword">void</span> Awake()
+    {
+        OnTeleport_event += s1t.TeleportUp;
+        OnTeleport_event += s2t.TeleportDown;
+
+        OnAbroad_event += s1t.ReturnToStartLeft;
+        OnAbroad_event += s2t.ReturnToStartRight;
+    }
+
+    <span class="keyword">void</span> Update()
+    {
+        <span class="keyword">if</span> (Input.GetKeyDown(<span class="string">"space"</span>)) OnTeleport_event();
+        <span class="keyword">if</span> ((s1t._transform.position.y &gt; <span class="number">2</span>) || (s2t._transform.position.y &lt; -<span class="number">2</span>)) OnAbroad_event();
+    }
+}
+</code></pre><br>
+</div></div>
+            <div class="clear"></div>
+        </div>
+
+        
+<ul class="tags">
+	<li><a href="http://habrahabr.ru/search/?q=%5B%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D1%8F%5D&target_type=posts" rel="tag">события</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bc%23%5D&target_type=posts" rel="tag">c#</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bunity3d%5D&target_type=posts" rel="tag">unity3d</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bunity%5D&target_type=posts" rel="tag">unity</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5B%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82%D1%8B%5D&target_type=posts" rel="tag">скрипты</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5B%D0%B2%D0%B7%D0%B0%D0%B8%D0%BC%D0%BE%D0%B4%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%B8%D0%B5%5D&target_type=posts" rel="tag">взаимодействие</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5B%D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%5D&target_type=posts" rel="tag">организация</a></li>
+</ul>
+
+        <div class="infopanel_wrapper">
+	<div class="infopanel " id="infopanel_post_245219">
+
+				<div class="voting   ">
+
+						<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+
+					<div class="mark positive ">
+							<span class="score" title="Всего 18: ↑13 и ↓5">+8</span>
+					</div>
+
+						<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+
+				</div>
+
+		<div class="pageviews" title="Просмотры публикации">16362</div>
+
+		<div class="favorite">
+				<a class="guest" href="http://habrahabr.ru/post/245219/#" onclick="return false;" title="Только зарегистрированные пользователи могут добавлять публикации в избранное"></a>
+		</div>
+		<div class="favs_count" title="Количество пользователей, добавивших публикацию в избранное">180</div>
+
+
+
+
+
+
+
+				<div class="author">
+					<a title="Автор текста" href="http://habrahabr.ru/users/ArXen42/">ArXen42</a>
+					<span class="rating" title="рейтинг пользователя">0,0</span>
+				</div>
+
+
+
+			<div class="share">
+				<div class="twitter">
+					<a href="http://twitter.com/intent/tweet?text=%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%B0%D1%8F+%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0+%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9+%D0%B2+Unity+http://habr.ru/p/245219/+via+%40habrahabr+%23habr" title="Опубликовать ссылку в Twitter" target="_blank"></a>
+				</div>
+				<div class="vkontakte">
+					<a href="https://vk.com/share.php?url=http://habrahabr.ru/post/245219/" title="Опубликовать ссылку во ВКонтакте" onclick="window.open(this.href, &#39;Опубликовать ссылку во Вконтакте&#39;, &#39;width=800,height=300&#39;); return false"></a>
+				</div>
+				<div class="facebook">
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http://habrahabr.ru/post/245219/" title="Опубликовать ссылку в Facebook" onclick="window.open(this.href, &#39;Опубликовать ссылку в Facebook&#39;, &#39;width=640,height=436,toolbar=0,status=0&#39;); return false"></a>
+				</div>
+				<div class="googleplus">
+					<a href="https://plus.google.com/share?url=http://habrahabr.ru/post/245219/" title="Опубликовать ссылку в Google Plus" onclick="window.open(this.href, &#39;Опубликовать ссылку в Google Plus&#39;, &#39;width=800,height=300&#39;); return false"></a>
+				</div>
+			</div>
+
+	</div>
+	<div class="clear"></div>
+</div>
+
+
+
+
+
+    </div>
+    
+    </div>
+
+  	
+  <div id="adriver_banner_132032996"></div>
+
+  <script type="text/javascript">
+      /** Для блоков гугла **/
+      function requireAdsafe(file){
+          var head = document.getElementsByTagName("head")[0];
+          var script = document.createElement('script');
+          script.src = file;
+          script.type = 'text/javascript';
+          head.appendChild(script);
+      }
+
+      function show_inner_banner_block(name, url){
+          if( typeof(name) !== 'undefined'){
+              //$.get('/html/'+name+'/1436891588/', function(html){
+              $.get('http://special.habrahabr.ru/api/htmlblock/'+name+'/', function(html){
+                  $('#adriver_banner_132032996').html(html);
+                  $('.'+name+'_inner_banner').removeClass('hidden');
+                  if( typeof(url) !== 'undefined'){
+                      $('.'+name+'_inner_banner .block_url').attr('href', url);
+                  }
+              }, 'html')
+          }
+      }
+
+        $(function(){
+          var check_scroll_position = function() {
+            var height = $(window).height();
+            var scrollTop = $(window).scrollTop();
+            var scrollBottom = $(window).scrollTop() + height;
+            var blockTop = $('#adriver_banner_132032996').position().top;
+            var show = scrollTop < blockTop && blockTop < scrollBottom;
+
+            if( show ){
+                $( window ).off('scroll', check_scroll_position);
+                $( window ).trigger('show_bn3');
+            }
+          };
+
+
+          $( window ).on('show_bn3', function(){
+            var keyword = '';
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+            var custom = { 4:ar_duo1 };
+                custom[1] = 'unity3d';
+                custom[2] = 'csharp';
+                custom[3] = 'gdev';
+
+            //if (true)
+            //    show_inner_banner_block('raiffaizen2');
+            //else
+                new adriver("adriver_banner_132032996", {sid: 176776, bt: 52, bn: 3, custom: custom, keyword: keyword});
+          });
+
+          $( window ).on('scroll', check_scroll_position);
+          // $( window ).trigger('show_bn3');
+        });
+    </script>
+
+
+
+
+
+      <div class="block_after_post">
+        
+
+
+<div class="similar_posts">
+
+    <h2 class="title">Похожие публикации</h2>
+    <div class="posts_list">
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/260969/">Дайджест новостей из мира разработки на Unity</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/260715/">Как используя Canvas собрать кликабельную карту мира на Unity3d</a>&nbsp;<span class="count">(26)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/251573/">Использование skyboxes в Unity3d</a>&nbsp;<span class="count">(88)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/250153/">Continuous Integration с Unity</a>&nbsp;<span class="count">(20)</span>
+        </div>
+        <div class="post_item">
+            <span class="bull"></span>
+            <a class="post_name" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;similar_posts&#39;, &#39;common&#39;); }" href="http://habrahabr.ru/post/147315/">Порядок событий в Unity3D</a>&nbsp;<span class="count">(11)</span>
+        </div>
+    </div>
+</div>
+
+
+
+      </div>
+
+  		    <div class="comments_list " id="comments">
+
+        <h2 class="title ">Комментарии (<span id="comments_count">15</span>)
+            
+
+        </h2>
+
+        
+
+            <div class="comment_item" id="comment_8168997">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8168997">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8168997" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 4: ↑4 и ↓0">+4</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/HurrTheDurr/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/HurrTheDurr/" class="username">HurrTheDurr</a>
+            <time> 8 декабря 2014 в 01:17</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8168997" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Это возможность самого C#, а не Unity. <br>
+К тому же, ваш пример упадет, если на событие никто не подписался — перед вызовом, нужно проверять событие на null. <br>
+И содержит утечку памяти — от событий нужно отписываться при уничтожении объекта. Подписывайтесь в OnEnable, отписывайтесь в OnDisable. 
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8168997">
+        <div class="comment_item" id="comment_8169017">
+
+    <span class="parent_id" data-parent_id="8168997"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8169017">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169017" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 01:39</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169017" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8169017" data-parent_id="8168997" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8168997" data-id="8169017" data-parent_id="8168997" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо за советы, завтра добавлю их в статью. <br>
+Моей задачей было конкретно показать, как скрестить стандартную си шарповскую систему и юнити, а если хочется самописную — статья про «мировой эфир» в помощь. Я расписал именно простейший вариант для новичков. <br>
+Кстати, а в JS что-нибудь подобное есть?
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169017">
+        <div class="comment_item" id="comment_8169095">
+
+    <span class="parent_id" data-parent_id="8169017"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169095">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169095" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 4: ↑3 и ↓1">+2</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Newarray/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Newarray/" class="username">Newarray</a>
+            <time> 8 декабря 2014 в 03:28</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169095" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8169095" data-parent_id="8169017" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169017" data-id="8169095" data-parent_id="8169017" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Когда прочел статью сразу масса критики возникла, потом посмотрел автору топика только 17 лет — отупстило :)<br>
+<br>
+И все же о некоторых пунктах я упомяну:<br>
+1.<br>
+<blockquote>Делается это при помощи <b>операции инкремента</b>, мы как бы <b>прибавляем </b>к событию методы</blockquote><br>
+<br>
+Прочитал и поперхнулся чаем — инкремент и декремент для меня всегда значили математическую операцию увеличения числа на единицу, но в контексте событий и методов — это на мой взгляд непременимо, так же как используемый термин «прибавляем».<br>
+<br>
+2.<br>
+Как правильно заметил <a href="http://habrahabr.ru/users/hurrthedurr/" class="user_link">HurrTheDurr</a> казалось бы причем здесь Unity? События это стандартные возможности C#.<br>
+<br>
+3.<br>
+Не во всех моментах стоит плодить множество под скриптов, минимализм методов конечно хорошо, но если есть возможность обьеденяйте скрипты. Например если при стрельбе в положении лежа и в положении стоя меняются многие концигурации — это да да, явно заслуживает разделения на 2 независимых скрипта. Ну а если же у вас есть банка с хилом, при выпивании которого увеличивается здоровье не важно лежа или стоя, то смело пакуйте это в один скрипт, который потом можно будет кинуть в стопку с остальными общими событиями и подписывать уже группу.<br>
+<br>
+4.<br>
+Впринципе вы описали обычную MVC… Но если вы сами до этого дошли, то честь вам и хвала:)<br>
+<br>
+5. <br>
+Продолжайте! :)<br>
+<br>
+
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169095">
+        <div class="comment_item" id="comment_8169099">
+
+    <span class="parent_id" data-parent_id="8169095"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169099">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169099" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Newarray/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/Newarray/" class="username">Newarray</a>
+            <time> 8 декабря 2014 в 03:32</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169099" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8169099" data-parent_id="8169095" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169095" data-id="8169099" data-parent_id="8169095" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            P.S. <br>
+Статья впринципе элементарная на RSDN более подробно описана тема событий. Но это первая публикаци автора, так что… Продолжайте! Буду рад следить за вашим успехами:)
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169099">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_8170175">
+
+    <span class="parent_id" data-parent_id="8169095"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170175">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170175" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 17:59<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170175" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8170175" data-parent_id="8169095" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169095" data-id="8170175" data-parent_id="8169095" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            1)Всегда думал, что инкремент на единицу — частный случай инкремента, ошибался, спасибо.<br>
+2)Большинство новичков начинают изучать С# когда приходят в Unity, а не наоборот. Соответственно ни о каких таких событиях они не слышали. Лично мне было очень сложно во все это въехать, даже сложнее чем когда-то в рекурсию. Уже почти бросил проект в третий раз, когда нашел удобоваримую статью про события и заставил работать этот пример со сферами. Причем, как только сделал, понял, что ничего сложного тут нет, но разбираться было тяжко. Вот и захотелось облегчить задачу другим.<br>
+3)Тоже думал на эту тему. Можно было бы объединить скрипты сфер и сделать одно событие под границы, но это усложнило бы восприятие событий, поэтому сделал все разделенным. Пожалуй, оформлю это все в качестве примечания.<br>
+4)Ну разве что создал один вопрос на unity answers и тему на форуме unity3d. В первом случае получил стену кода, во втором случае меня послали думать самому, а не ждать помощи, за что им спасибо, свой код всегда лучше чужого (хотя нет, он лучше чужого только тем, что досконально понятно, как он работает).<br>
+5)Обязательно! Пару месяцев попрограммирую, наверняка будет о чем рассказать. В следующий раз постараюсь быть более грамотным в рассматриваемом вопросе.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170175">
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_8169133">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169133">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169133" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 1: ↑1 и ↓0">+1</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/fstleo/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/368ef5a429c2f43250ba7b4a9c64dc17_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/fstleo/" class="username">fstleo</a>
+            <time> 8 декабря 2014 в 05:54</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169133" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Хорошо, но подписывать на события в самом контроллере кажется неудобным. Если объект создается и уничтожаются во время игры? Считаю, что лучше подписываться и отписываться на события в самом объекте, а не в контроллере.<br>
+Но статья будет полезна начинающим.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169133">
+        <div class="comment_item" id="comment_8170213">
+
+    <span class="parent_id" data-parent_id="8169133"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170213">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170213" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 18:14</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170213" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8170213" data-parent_id="8169133" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169133" data-id="8170213" data-parent_id="8169133" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Зато так я показал, что на события можно подписываться из стороннего класса без создания его экземпляра (хотя если создавать экземпляр скрипта и привязывать его через редактор, то это, я так понимаю, не совсем экземпляр. Могу предположить, что это либо что-то вроде указателя на другой экземпляр). <br>
+Тут все зависит от контекста проекта. Лично мне кажется удобным засунуть все подписки в один класс, чтобы они не мешались. Но у меня пока не возникало необходимости динамически под/отписываться.<br>
+Спасибо за наводку, кажется я придумал способ избежать ненужного взаимодействия с игровым полем при нажатии кнопки GUI (есть такая у меня проблема, нажимаю кнопку, а у меня кроме нее еще и на игровое поле клик считывается и корабль летит не туда)…
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170213">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_8169233">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169233">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169233" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Tutanhomon/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/dc0cbf54fe00fd5aa5d64e2517db422b_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/Tutanhomon/" class="username">Tutanhomon</a>
+            <time> 8 декабря 2014 в 10:00</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169233" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Опасно подписываться на статику…<br>
+Если ваш мяч подпишется на событие из аггрегатора, а игра перейдет в сцену в которой мяча уже нет — подписка останется, но вызов события повалит вашу игру НаллРеференсом.<br>
+Схема сама по себе вполне рабочая и удобная, но нужно не забывать отписываться в OnDisable (для симметрии предпочитаю подписываться в OnEnable)
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169233">
+        <div class="comment_item" id="comment_8170215">
+
+    <span class="parent_id" data-parent_id="8169233"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170215">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170215" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 18:16</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170215" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8170215" data-parent_id="8169233" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169233" data-id="8170215" data-parent_id="8169233" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо, обязательно добавлю в статью. Чем мне и нравится хабр, написал статью, сразу узнал, что я делаю неправильно и как надо делать правильно.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170215">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_8169351">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169351">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169351" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 4: ↑2 и ↓2">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/aGosh/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/stub-user-small.gif" alt=""></a>
+            <a href="http://habrahabr.ru/users/aGosh/" class="username">aGosh</a>
+            <time> 8 декабря 2014 в 11:09</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169351" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Уважаемый автор, чтобы вам же было легче в будущем. Не используйте ивенты в Юнити:<br>
+1. В некоторых случаях они могут вызвать неисправимый меморилик.<br>
+2. Ивенты могут выглядеть как манна небесная и решение всех проблем. Но это не так. <br>
+3. Заивентить все стремятся люди, которые не могут продумать архитектуру приложения. Поверьте мне если вы продумаете архитектуру с жесткими связями, то сможете читать свой код без комментариев и любой другой программист тоже. С ивентами связанность и читаемость падает до 0. <br>
+4. Особенно если приложение работает неправильно, то с ивентами даже предположить что не так бывает сложно.<br>
+5. «Мировой эфир» — худшее, что можно посоветовать при использовании ивентов. Делайте архитектуру приложения!<br>
+6. Делайте архитектуру приложения!!!
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169351">
+        <div class="comment_item" id="comment_8169377">
+
+    <span class="parent_id" data-parent_id="8169351"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8169377">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8169377" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark positive ">
+                    <span class="score" title="Всего 2: ↑2 и ↓0">+2</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/GrigoryPerepechko/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/035e8b3eef2497920b52db5bd5ad0475_small.jpg" alt=""></a>
+            <a href="http://habrahabr.ru/users/GrigoryPerepechko/" class="username">GrigoryPerepechko</a>
+            <time> 8 декабря 2014 в 11:29<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8169377" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8169377" data-parent_id="8169351" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169351" data-id="8169377" data-parent_id="8169351" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            1 — неисправимый таки? <br>
+3 — а мужики то и не знали. Жесткие связи значит — идеальная архитектура?<br>
+4 — может вы просто не умеете их готовить?<br>
+6 — а что вы вкладываете в «архитектуру приложения»? 
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8169377">
+    </div>
+</div>
+
+        <div class="comment_item" id="comment_8170221">
+
+    <span class="parent_id" data-parent_id="8169351"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170221">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170221" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 18:21<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170221" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8170221" data-parent_id="8169351" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8169351" data-id="8170221" data-parent_id="8169351" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Вполне возможно. Но не имея достаточного опыта в программировании и геймдизайне, продумать правильную архитектуру практически не возможно. Я в своем проекте держу большую схему и стараюсь сначала продумать ее, а потом уже писать код, но сразу нарисовать ее для всей игры я не смогу, т.к. недалеко ушел от сферического нуба. <br>
+
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170221">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_8170317">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  " rel="8170317">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170317" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/Tutanhomon/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/dc0cbf54fe00fd5aa5d64e2517db422b_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/Tutanhomon/" class="username">Tutanhomon</a>
+            <time> 8 декабря 2014 в 19:31</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170317" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Опять же, как Вы сами писали, опасно вызывать события на которые никто не подписан, поэтому:<br>
+<br>
+Не<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">void</span> CallOnTurnSwitchEvent() { OnTurnSwitch_event(); }
+</code></pre><br>
+А<br>
+<pre><code class="cs"><span class="keyword">public</span> <span class="keyword">void</span> CallOnTurnSwitchEvent() 
+{
+    <span class="keyword">if</span>( OnTurnSwitch_event != <span class="keyword">null</span>)
+    {
+        OnTurnSwitch_event();
+    }
+}
+</code></pre>
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170317">
+        <div class="comment_item" id="comment_8170363">
+
+    <span class="parent_id" data-parent_id="8170317"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170363">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170363" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 20:14<span class="time_changed"> (комментарий был изменён)</span></time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170363" class="link_to_comment">#</a>
+            
+                <div class="show_tree" data-id="8170363" data-parent_id="8170317" title="Показать ветку комментариев">↵</div>
+                <a href="http://habrahabr.ru/post/245219/#comment_8170317" data-id="8170363" data-parent_id="8170317" class="to_parent">↑</a>
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Конкретно в данном примере игра не предполагает изменения подписок, поэтому в этом нет необходимости. А так, конечно, нужно. Ну и подписки распихать в OnEnable/Disable. Кстати, тут этот метод не нужен, забыл убрать.
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170363">
+    </div>
+</div>
+
+    </div>
+</div>
+
+            <div class="comment_item" id="comment_8170367">
+
+    <span class="parent_id" data-parent_id="0"></span>
+    <div class="comment_body ">
+        <div class="info  is_topic_starter  " rel="8170367">
+            <div class="folding-dot-holder"><div class="folding-dot"></div></div>
+            <div id="voting_8170367" class="voting   ">
+                <span class="minus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <span class="plus" title="Голосовать могут только зарегистрированные пользователи"></span>
+                <div class="mark  ">
+                    <span class="score" title="Всего 0: ↑0 и ↓0">0</span>
+                </div>
+            </div>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="avatar"><img src="./Простая система событий в Unity _ Хабрахабр_files/125277f2e53de6ef83f64f10c39de544_small.png" alt=""></a>
+            <a href="http://habrahabr.ru/users/ArXen42/" class="username">ArXen42</a>
+            <time> 8 декабря 2014 в 20:18</time>
+
+            <a href="http://habrahabr.ru/post/245219/#comment_8170367" class="link_to_comment">#</a>
+            
+            <span class="to_chidren"></span>
+            <div class="clear"></div>
+        </div>
+        <div class="message html_format ">
+            Спасибо, забыл исправить. 
+        </div>
+        <div class="reply_form_placeholder"></div>
+        <div class="reply">
+            
+        </div>
+    </div>
+
+    <div class="reply_comments" id="reply_comments_8170367">
+    </div>
+</div>
+
+    </div>
+
+
+  					<p class="for_users_only_msg">Только зарегистрированные пользователи могут оставлять комментарии. <a href="https://habrahabr.ru/auth/login/">Войдите</a>, пожалуйста.</p>
+
+
+
+    <div class="block_after_post">
+      
+
+  <div class="live_broadcast">
+    <h2 class="title">Что обсуждают?</h2>
+    <div class="posts_list">
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262543#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Как решать вступительный экзамен в Школу анализа данных Яндекса</a>&nbsp;<span class="count">(33)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262623#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">36 млн запросов в час, 10000+ постоянно работающих клиентов, на одном сервере, nginx+mysql</a>&nbsp;<span class="count">(55)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262549#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Что не так с сэмплированием</a>&nbsp;<span class="count">(1)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262645#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Firefox блокирует плагин Adobe Flash Player</a>&nbsp;<span class="count">(57)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262595#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Сентимент анализ текста</a>&nbsp;<span class="count">(4)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262461#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Выбор между C++ и C#</a>&nbsp;<span class="count">(199)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262529#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Опыт разработки и проектирования на AngularJS</a>&nbsp;<span class="count">(3)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262551#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">О новом push-сервере «1С-Битрикс»</a>&nbsp;<span class="count">(11)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/261891#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">Детектируем, разбираем, изучаем, паяем и глушим полицейские радары и лидары</a>&nbsp;<span class="count">(58)</span>
+          </div>
+          <div class="post_item">
+            <span class="bull"></span>
+            <a href="http://habrahabr.ru/post/262615#comments" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;live_broadcast_activity&#39;, &#39;post&#39;); }" class="post_name">iOS Инструменты разработчика</a>&nbsp;<span class="count">(12)</span>
+          </div>
+    </div>
+  </div>
+
+    </div>
+
+  	
+<form action="http://habrahabr.ru/json/favorites/" method="post" id="edit_tags_form" class="hidden">
+  <input type="hidden" name="action" value="add">
+  <input type="hidden" name="ti" value="0">
+  <input type="hidden" name="tt" value="0">
+  <label>Пометьте топик понятными вам метками, если хотите</label>
+  <input type="text" name="tags_string" class="tags_string" autocomplete="off">
+  <div class="description">Метки лучше разделять запятой. Например: <i>общение, социальные сети, myspace.com, подростки, мердок</i></div>
+  <input type="submit" value="Сохранить" class="submit"> или <a href="http://habrahabr.ru/post/245219/#" class="close" onclick="return close_edit_tags()">закрыть</a>
+</form>
+
+
+
+  </div>
+  <div class="sidebar_right">
+  		<div class="banner_300x500">
+    <div id="adriver_banner_1863387959" title="" style="width: 300px; height: 500px; text-align: center; margin: 0px auto;"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&ad=531302&bid=3937916&bt=52&bn=1&pz=0&xpid=CINUVXl_wnsNZQ9VmF22g2U7cpOSq2khF&ref=http:%2f%2fhabrahabr.ru%2fpost%2f245219%2f&custom=1%3Dunity3d%3B2%3Dcsharp%3B3%3Dgdev%3B4%3D4&rleurl=" target="_blank" onclick="adriver(&#39;adriver_banner_1863387959&#39;).sendPixel(&#39;&#39;);"><img src="./Простая система событий в Unity _ Хабрахабр_files/bn1-oppo-3.jpg" height="100%" alt="AdRiver" border="0"></a></div>
+
+    <script type="text/javascript">
+        function show_bn1_block(name, url){
+            console.log('show' + name);
+            if( typeof(name) !== 'undefined'){
+                $.get('/html/'+name+'/1436891588/', function(html){
+                    $('#adriver_banner_1863387959').html(html);
+                    if( typeof(url) !== 'undefined'){
+                        $('.'+name+'_inner_banner .block_url').attr('href', url);
+                    }
+                })
+            }
+        }
+
+        $(function(){
+
+            // конвертирут кириллицу в cp1251
+            // doc: http://www.adriver.ru/doc/edu-n/pub/settargt/standtrgt/scentrgt/scentrgt.html#9
+            function esc(s){
+                for(var i=0,l=s.length,r='';i<l;i++){
+                    var c = s.charCodeAt(i);r += String.fromCharCode(c>1039&&c<1104 ? c-848 : c==1105 ? 184 : c==1025 ? 168 : c);
+                }
+                return r;
+            }
+
+            var keyword = '';
+
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+
+
+
+            var custom = {4:ar_duo1};
+                custom[1] = 'unity3d';
+                custom[2] = 'csharp';
+                custom[3] = 'gdev';
+
+             new adriver("adriver_banner_1863387959", {sid: 176776, bt: 52, bn: 1, custom: custom, keyword: keyword});
+
+
+
+
+            var check_scroll_position10 = function() {
+                var height = $(window).height();
+                var scrollTop = $(window).scrollTop();
+                var blockTop = $('#adriver_banner_1863387959').position().top;
+                var show = scrollTop < (blockTop + 900) && typeof(bn2Showed) != 'undefined';
+                if( show ){
+                    $( window ).off('scroll', check_scroll_position10);
+                    $( window ).trigger('show_bn10');
+                }
+            };
+
+            $( window ).on('show_bn10', function(){
+                $('#adriver_banner_1863387959').html('');
+                var pz = Math.floor(Math.random()*3+1);
+                var uu = new adriver("adriver_banner_1863387959", { sid: 176776, bt: 52, bn: 1, pz: pz});
+                uu.reload();
+            });
+
+            $( window ).on('scroll', check_scroll_position10);
+
+        }());
+
+
+
+
+    </script>
+</div>
+
+  		
+  		
+<div class="block daily_best_posts">
+
+
+  <div class="title">Популярное за сутки</div>
+  <div class="posts_list">
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262623/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">36 млн запросов в час, 10000+ постоянно работающих клиентов, на одном сервере, nginx+mysql</a>&nbsp;<a href="http://habrahabr.ru/post/262623/#comments" class="count">50</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262631/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Билайн вмешивается в трафик пользователей</a>&nbsp;<a href="http://habrahabr.ru/post/262631/#comments" class="count">49</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/yandex/blog/262543/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Как решать вступительный экзамен в Школу анализа данных Яндекса</a>&nbsp;<a href="http://habrahabr.ru/company/yandex/blog/262543/#comments" class="count">32</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/mailru/blog/261871/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">«Под капотом» индексов Postgres</a>&nbsp;<a href="http://habrahabr.ru/company/mailru/blog/261871/#comments" class="count">15</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/261273/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Такие удивительные семафоры</a>&nbsp;
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262615/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">iOS Инструменты разработчика</a>&nbsp;<a href="http://habrahabr.ru/post/262615/#comments" class="count">12</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/infobox/blog/262553/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Обзор российского офисного пакета с открытыми исходными текстами OnlyOffice в InfoboxCloud</a>&nbsp;<a href="http://habrahabr.ru/company/infobox/blog/262553/#comments" class="count">29</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/pentestit/blog/262579/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Взлом сайта и его последствия</a>&nbsp;<a href="http://habrahabr.ru/company/pentestit/blog/262579/#comments" class="count">26</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262555/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">История о том, как я угольный котел автоматизировал</a>&nbsp;<a href="http://habrahabr.ru/post/262555/#comments" class="count">12</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/e-Legion/blog/262575/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Бесплатная онлайн школа Android-разработчиков. Последние дни регистрации</a>&nbsp;<a href="http://habrahabr.ru/company/e-Legion/blog/262575/#comments" class="count">8</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/neuronspace/blog/258937/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Польза 3d-принтеров для медицины и ракетостроения: настольные FDM против промышленного металлического (могут ли 500 зерлингов завалить дарк темплара?)</a>&nbsp;<a href="http://habrahabr.ru/company/neuronspace/blog/258937/#comments" class="count">8</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/papabubadiop/blog/262589/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Японский дурак</a>&nbsp;<a href="http://habrahabr.ru/company/papabubadiop/blog/262589/#comments" class="count">3</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262563/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Эффективное кодирование видео в Linux c Nvidia NVENC: часть 2, дополнительная</a>&nbsp;<a href="http://habrahabr.ru/post/262563/#comments" class="count">5</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262507/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Эффективное кодирование видео в Linux c Nvidia NVENC: часть 1, общая</a>&nbsp;<a href="http://habrahabr.ru/post/262507/#comments" class="count">10</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/realweb/blog/262573/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Мечты об идеальном API или как преодолевались сложности в проекте AdHands</a>&nbsp;<a href="http://habrahabr.ru/company/realweb/blog/262573/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262601/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Преобразование девиации и его использование для определения системы координат по набору расстояний</a>&nbsp;
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/softline/blog/262547/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">IT-атмосфера бизнеса: Google Apps for Work</a>&nbsp;<a href="http://habrahabr.ru/company/softline/blog/262547/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/custis/blog/262605/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Миграция данных из Oracle в PostgreSQL</a>&nbsp;<a href="http://habrahabr.ru/company/custis/blog/262605/#comments" class="count">4</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/company/appodeal/blog/260091/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Freemium в мобильных приложениях. История одной неудачи и одного успеха</a>&nbsp;<a href="http://habrahabr.ru/company/appodeal/blog/260091/#comments" class="count">3</a>
+      </div>
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/262613/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;daily_best_posts&#39;, $(this).parents(&#39;.daily_best_posts&#39;).hasClass(&#39;float_block&#39;) ? &#39;float&#39; : &#39;common&#39;); }" class="post_name">Сборщик почты (делаем простые вещи сложно)</a>&nbsp;<a href="http://habrahabr.ru/post/262613/#comments" class="count">3</a>
+      </div>
+  </div>
+  <div class="all"><a href="http://habrahabr.ru/top/">все лучшие</a></div>
+</div>
+
+	    
+
+<div class="block geektimes_top">
+	<a href="http://geektimes.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Лучшее на Geektimes</a>
+	<div class="posts_list">
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253428/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Стабилизация видеосъёмки в киноиндустрии, или «Про Тульскую Головку»</a>&nbsp;<a href="http://geektimes.ru/post/253428/#comments" class="count">10</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253516/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Сигнал с New Horizons об успешном пролете мимо Плутона достиг Земли</a>&nbsp;<a href="http://geektimes.ru/post/253516/#comments" class="count">7</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253474/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">New Horizons сфотографировал Плутон с расстояния в 766000 км</a>&nbsp;<a href="http://geektimes.ru/post/253474/#comments" class="count">15</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253498/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">ЦЕРН подтвердил открытие нового класса частиц — пентакварков</a>&nbsp;<a href="http://geektimes.ru/post/253498/#comments" class="count">10</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253506/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Семь вредных советов начинающему коптероводу</a>&nbsp;<a href="http://geektimes.ru/post/253506/#comments" class="count">15</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253492/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Создателя фильма «Citizenfour: Правда Сноудена», получившего «Оскар», 50 раз задерживали в американских аэропортах</a>&nbsp;<a href="http://geektimes.ru/post/253492/#comments" class="count">17</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253448/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Cближение с Плутоном может уничтожить New Horizons</a>&nbsp;<a href="http://geektimes.ru/post/253448/#comments" class="count">5</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253398/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Астрономы зафиксировали в одной из галактик рекордный по мощности всплеск гамма-излучения</a>&nbsp;<a href="http://geektimes.ru/post/253398/#comments" class="count">4</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253450/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Опыт создания командной игры в виртуальной реальности</a>&nbsp;<a href="http://geektimes.ru/post/253450/#comments" class="count">1</a>
+  		</div>
+  		<div class="post_item">
+  			<a class="post_name" href="http://geektimes.ru/post/253460/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">«Мисс Эргономика» в третьем поколениии – обзор Logitech MX Master</a>&nbsp;<a href="http://geektimes.ru/post/253460/#comments" class="count">48</a>
+  		</div>
+	</div>
+	<div class="all"><a href="http://geektimes.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все публикации</a></div>
+</div>
+
+	  	
+
+<div class="block geektimes_top">
+    <a href="http://megamozg.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Лучшее на Мегамозге</a>
+    <div class="posts_list">
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17464/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Как команда технарей свою компанию создавала, сезон 2 (жизнь в кризис)</a>&nbsp;<a href="http://megamozg.ru/post/17464/#comments" class="count">14</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17472/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Идеализм в IT — тормоз в развитии</a>&nbsp;<a href="http://megamozg.ru/post/17472/#comments" class="count">19</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17474/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Войти в IT: «Я писал игры для калькулятора»</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17450/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Фрилансер или берете подработки? Последствия работы с заказчиками и исполнителями без должного оформления</a>&nbsp;<a href="http://megamozg.ru/post/17450/#comments" class="count">18</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17476/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Китайская государственная Tsinghua Unigroup Ltd готовит выкуп американской Micron Technology</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17460/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">SAP будет продавать свои продукты в России за рубли</a>&nbsp;<a href="http://megamozg.ru/post/17460/#comments" class="count">2</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17478/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Новое фотоприложение «ВКонтакте» имеет все шансы выстоять в конкурентной борьбе с Instagram</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17468/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Владимир Путин сделает все цифровые эфирные телеканалы бесплатными</a>&nbsp;<a href="http://megamozg.ru/post/17468/#comments" class="count">9</a>
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17466/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Все, что вы хотели узнать о Cortex – новой группе Twitter по разработкам, связанным с искусственным интеллектом</a>&nbsp;
+        </div>
+        <div class="post_item">
+            <a class="post_name" href="http://megamozg.ru/post/17462/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">АКАР и Sostav.ru составили рейтинги крупнейших игроков на российском рынке рекламы без учета интернет-сегмента</a>&nbsp;
+        </div>
+
+    </div>
+    <div class="all"><a href="http://megamozg.ru/" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все публикации</a></div>
+</div>
+
+
+  	  
+<div class="block similar_questions">
+	<div class="title">Вопросы по теме</div>
+
+	<div class="posts_list">
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232119">Как сделать закрытый сервис вопросов и ответов?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232117">Долгий ответ от сервера, более 3 сек. Какой элемент вызывает ошибку на движке wordpress?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232065">Где продать скрипт/сервис?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232012">Как изменить язык описания ошибок в браузере?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/232000">Вопрос по C# и net framework?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231918">C# работа с WebBrowser без подвисаний формы?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231885">Как получить код нажатой клавиши?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231877">Как запусть программу из службы?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231851">SharpDevelop работает все кроме Build, Debug, проблема с компилятором. Может что-то где-то прописать и настроить надо?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231842">Вылетает исключение в XAML Designer. Иногда вылетает, иногда нет. Подробности в теме с картинками. Сталкивался кто?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231775">Использовать ли UserControl в WPF MVVM?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231768">Почему при tcp соединении постоянно приходит "мусор"?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231764">Что лучше 1С или C#(ASP.NET)?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231758">Динамическая генерация 2D ландшафта, как реализовать?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231696">На чем лучше всего писать современые прикладныи приложения под Windows?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231683">Реально ли запустить Visual Studio как portable?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231599">Как правильно указать ссылку используя сессии?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231472">Практичиское применения гиперболичиских функций?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231414">Как создать паттерн JSON, если неизвестно имя параметра?</a>
+		</div>
+    	<div class="post_item">
+    	    <a class="post_name" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" href="http://toster.ru/q/231394">Где найти каналы на youtube по С#?</a>
+		</div>
+  </div>
+
+</div>
+
+
+  		<!--  AdRiver code START. Type:AjaxJS Site: habrahabr PZ: 0 BN: 2 -->
+
+<div id="adriver_banner_480931290" class="adbanner"></div>
+
+
+<script type="text/javascript">
+    function show_bn2_block(name, url){
+        if( typeof(name) !== 'undefined'){
+            $.get('/html/'+name+'/1436891588/', function(html){
+                $('#adriver_banner_480931290').html(html);
+                if( typeof(url) !== 'undefined'){
+                    $('.'+name+'_inner_banner .block_url').attr('href', url);
+                }
+            })
+        }
+    }
+
+    $(function(){
+
+        var check_scroll_position = function() {
+            var height = $(window).height();
+            var scrollTop = $(window).scrollTop();
+            var scrollBottom = $(window).scrollTop() + height;
+            var blockTop = $('#adriver_banner_480931290').position().top;
+            var show = scrollTop < blockTop && blockTop < scrollBottom;
+            if( show ){
+                $( window ).off('scroll', check_scroll_position);
+                $( window ).trigger('show_bn2');
+                bn2Showed = true;
+            }
+        };
+
+        $( window ).on('show_bn2', function(){
+            var keyword = '';
+            if (typeof crtg_content !== 'undefined' && crtg_content) { keyword = crtg_content; }
+            var custom = {4:ar_duo1};
+            custom[1] = 'unity3d';
+            custom[2] = 'csharp';
+            custom[3] = 'gdev';
+            new adriver("adriver_banner_480931290", {sid: 176776, bt: 52, bn: 2, custom: custom, keyword: keyword});
+
+        });
+
+        $( window ).on('scroll', check_scroll_position);
+        // $( window ).trigger('show_bn2');
+
+
+    });
+    </script>
+<!--  AdRiver code END  -->
+
+  		
+<div class="block best_company">
+
+		<div class="title">Компания дня <img src="./Простая система событий в Unity _ Хабрахабр_files/bg_cicle_help.png" class="help-tip"></div>
+
+		<div class="company_info">
+			<div class="name">
+			 <img class="favicon" src="./Простая система событий в Unity _ Хабрахабр_files/d6004181077d9122d88b3a14e4ec965c_small.png" alt="ESET NOD32" height="16" width="16">
+			 <div class="company_name"><a href="http://habrahabr.ru/company/eset/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;best_company&#39;, &#39;title&#39;); }" class="title">ESET NOD32</a></div>
+			</div>
+
+			<p>Последняя публикация:
+				<a href="http://habrahabr.ru/company/eset/blog/262635/" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;best_company&#39;, &#39;post&#39;); }">В Internet Explorer 11 обнаружена уязвимость нулевого дня</a>
+			</p>
+
+			<div class="buttons">
+  			<div id="fans_count">1576 подписчиков</div>
+			</div>
+		</div>
+
+	</div>
+
+
+  		
+  		
+  		
+  </div>
+  <div class="clear"></div>
+
+  <script>
+    // hubs to GA
+      ga('send', 'event', 'Post_view', 'unity3d (Unity3D)',  window.location.pathname + window.location.search);
+      ga('send', 'event', 'Post_view', 'csharp (C#)',  window.location.pathname + window.location.search);
+      ga('send', 'event', 'Post_view', 'gdev (Game Development)',  window.location.pathname + window.location.search);
+  </script>
+
+
+
+
+        	
+	<div class="rotated_posts">
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/post/254473/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">Вы неправильно пишете животных</a>
+			</div>
+			<div class="rotated_post ">
+				<a href="http://habrahabr.ru/post/251751/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">Доказательство некорректности алгоритма сортировки Android, Java и Python</a>
+			</div>
+			<div class="rotated_post last">
+				<a href="http://habrahabr.ru/post/257133/" class="grey" onclick="if (typeof ga === &#39;function&#39;) { ga(&#39;send&#39;, &#39;event&#39;, &#39;tm_block&#39;, &#39;posts_rotation_block&#39;); }">Билайн автоматически добавляет тулбар с поиском Mail.Ru</a>
+			</div>
+		<div class="clear"></div>
+	</div>
+
+        <div class="bottom_promo_blocks">
+    <div class="left">
+            
+	<div class="block new_vacanies">
+  <a href="https://moikrug.ru/vacancies" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo" class="title">Мой круг</a>
+  <div class="vacancies">
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000011570" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Менеджер проектов</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019817" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Бизнес-аналитик [Москва]</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000009642" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Веб-разработчик (junior/middle)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019816" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">JavaScript/Coffeescript разработчик (middle)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019812" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Java Developer</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000014240" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">(Senior ((Python Django) full-stack) Developer)</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019807" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Менеджер проектов в UX-студию</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000008805" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Senior PHP Developer</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000011378" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">iOS Разработчик</a>
+		</div>
+		<div class="job_item ">
+			<a href="http://moikrug.ru/vacancies/1000019799" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">Frontend разработчик</a>
+		</div>
+  </div>
+  <div class="all"><a href="https://moikrug.ru/vacancies" data-utm="?utm_source=tm_habrahabr&amp;utm_medium=tm_block&amp;utm_campaign=tm_promo">все вакансии</a></div>
+</div>
+
+    </div>
+    <div class="right">
+        
+	<div class="block freelansim">
+	  <a href="http://freelansim.ru/" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim" class="title"></a>
+	  <div class="tasks">
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115919" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Переделать модуль карточки товара для Netcat standart</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115917" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Создание личного кабинета для продажи полюсов ОСАГО</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115909" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Разработка фирменного стиля и дизайн сайта</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115907" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Надстройка на сайт</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115843" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Software Engineer, iOS</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115859" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Дизайн лотерейного сайта</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115591" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Frontend разработка сервиса</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/113749" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Веб-сервис (робот, парсинг)</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115901" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Несколько правок в простом магазине</a>
+				</div>
+				<div class="task ">
+					<a href="http://freelansim.ru/tasks/115899" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">Убрать ошибку на сайте</a>
+				</div>
+
+	  </div>
+	  <div class="all"><a href="http://freelansim.ru/tasks" data-utm="?utm_source=habrahabr&amp;utm_medium=referral&amp;utm_campaign=mainpage&amp;utm_content=block_freelansim">все заказы</a></div>
+	</div>
+
+    </div>
+    <div class="clear"></div>
+</div>
+
+
+
+        <div class="clear"></div>
+
+        <div class="footer_panel">
+          <div id="footer">
+	<dl>
+		<dd><a href="https://habrahabr.ru/auth/login/">Войти</a></dd>
+		<dd><a href="https://habrahabr.ru/auth/register/">Регистрация</a></dd>
+	</dl>
+	<dl>
+		<dt>Разделы</dt>
+		<dd><a href="http://habrahabr.ru/posts/top/">Публикации</a></dd>
+		<dd><a href="http://habrahabr.ru/hubs/">Хабы</a></dd>
+		<dd><a href="http://habrahabr.ru/companies/">Компании</a></dd>
+		<dd><a href="http://habrahabr.ru/users/">Пользователи</a></dd>
+		<dd><a href="http://toster.ru/?_aa=press_anykey">Q&amp;A</a></dd>
+		<dd><a href="http://habrahabr.ru/sandbox/">Песочница</a></dd>
+		
+	</dl>	
+	<dl>
+		<dt>Инфо</dt>
+		<dd><a href="http://habrahabr.ru/info/about/">О сайте</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/rules/">Правила</a></dd>
+		<dd><a href="http://habrahabr.ru/info/help/">Помощь</a></dd>
+		<dd><a href="http://habrahabr.ru/info/agreement/">Соглашение</a></dd>
+	</dl>
+	<dl>
+		<dt>Услуги</dt>
+		<dd><a href="http://special.habrahabr.ru/advertising/">Реклама</a></dd>
+        <dd><a href="http://special.habrahabr.ru/">Спецпроекты</a></dd>
+        <dd><a href="http://special.habrahabr.ru/corporate/">Тарифы</a></dd>
+        <dd><a href="http://special.habrahabr.ru/content/">Контент</a></dd>
+        <dd><a href="http://special.habrahabr.ru/workshops/">Семинары</a></dd>
+	</dl>
+	<dl>
+		<dt>Разное</dt>
+		<dd><a href="http://habrahabr.ru/apps/">Приложения</a></dd>
+		<dd><a href="http://habrahabr.ru/special/testdrive/">Тест-драйвы</a></dd>
+		<dd><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=482836&bt=21&pid=1727881&bid=3951078&bn=3951078&rnd=1676524432">Помощь стартапам</a></dd>
+	</dl>
+	<div class="copyright">
+
+		<div class="about">
+			<a href="http://tmtm.ru/">© TM</a>
+			
+			<br><br>
+			<a href="http://habrahabr.ru/feedback/">Служба поддержки</a><br><br>
+                <a href="http://m.habrahabr.ru/post/245219/?mobile=yes">Мобильная версия</a><br><br>
+			
+
+			<div class="social_accounts">
+				<a href="https://twitter.com/habrahabr" class="tw"></a>
+				<a href="https://www.facebook.com/habrahabr.ru" class="fb"></a>
+				<a href="http://vk.com/habr" class="vk"></a>
+				<!-- <a href="" class="gp"></a> //-->
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+
+
+      <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/jquery.cookie.js"></script>
+      <script type="text/javascript">
+        $(document).ready( function(){
+          window.tmidLogin = function(){ return false; };
+          if( $.cookie('tmid_no_check') == undefined ) {
+            var expire = new Date();
+            expire.setMinutes(expire.getMinutes() + 10 );
+            $.cookie('tmid_no_check', 1, { expires: expire } );
+            $.getScript("https://id.tmtm.ru/checklogin/", function(){
+              if( window.tmidLogin() ) {
+
+                  var href = $('#login').attr('href');
+
+                  if( href !== undefined ) {
+                      window.location.href = href;
+                  }
+              }
+            });
+          }
+        });
+      </script>
+
+    <script type="text/javascript">
+  // global vars
+  var g_base_url = 'habrahabr.ru';
+  var g_show_xpanel = false;
+  var g_base_fullurl = 'http://habrahabr.ru/';
+  var g_is_guest = false;
+</script> 
+
+      <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/shortcuts.js"></script>
+
+    <script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/global_footer_main.js"></script>
+
+    	<script type="text/javascript" src="./Простая система событий в Unity _ Хабрахабр_files/saved_resource"></script>
+
+    
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter24049213 = new Ya.Metrika({id:24049213,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript>&lt;div&gt;&lt;img src="//mc.yandex.ru/watch/24049213" style="position:absolute; left:-9999px;" alt="" /&gt;&lt;/div&gt;</noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+<!-- adriver counter //-->
+<span style="position:absolute;left:-9999px;bottom:-20px">
+  <img src="./Простая система событий в Unity _ Хабрахабр_files/rle.cgi" width="1" height="1" alt="">
+</span>
+<!-- adriver counter end //-->
+
+    <!-- Facebook Pixel Code -->
+<script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+            document,'script','//connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '322477921209238');
+    fbq('track', 'PageView');
+</script>
+<noscript>&lt;img height="1" width="1" style="display:none"
+               src="https://www.facebook.com/tr?id=322477921209238&amp;ev=PageView&amp;noscript=1"
+        /&gt;</noscript>
+<!-- End Facebook Pixel Code -->
+
+    
+
+    <!-- Хабр не резиновый! -->
+  
+
+<div id="tiptip_holder" style="max-width:auto;"><div id="tiptip_arrow"><div id="tiptip_arrow_inner"></div></div><div id="tiptip_content"></div></div><div id="AutocompleteContainter_dbcf6" style="position: absolute; z-index: 9999; top: 0px; left: 0px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_dbcf6" style="display: none; width: 300px; max-height: 400px;"></div></div></div><div id="AutocompleteContainter_2a896" style="position: absolute; z-index: 9999; top: 2px; left: 0px;"><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_2a896" style="display: none; width: 300px; max-height: 400px;"></div></div></div><iframe src="./Простая система событий в Unity _ Хабрахабр_files/3.html" style="width: 10px; height: 10px; position: absolute; top: -10000px; left: -10000px;"></iframe></body></html>
