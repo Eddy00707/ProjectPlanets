@@ -10,7 +10,7 @@ public class _PlayerGravity : NetworkBehaviour {
 	public GameObject[] gravityPlanets, gravitySuns;
 	public float GravityMultiplier;
 
-	const float HOVER_DISTANCE = 4;
+	const float HOVER_DISTANCE = 6;
 
 	void Start () 
 	{
@@ -71,7 +71,7 @@ public class _PlayerGravity : NetworkBehaviour {
 						}
 					}
 				}
-				Debug.Log("Force:"+mainVector);
+				//Debug.Log("Force:"+mainVector);
 				mainVector+=hoverForce;
 				b.force=mainVector;
 

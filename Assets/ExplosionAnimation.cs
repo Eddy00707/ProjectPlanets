@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Rigidbody)) ]
 public class ExplosionAnimation : MonoBehaviour {
-
+	public AudioClip explosionSound;
 	public float loopduration=3f;
 	bool expanding;
 
@@ -11,6 +11,10 @@ public class ExplosionAnimation : MonoBehaviour {
 	void Start () 
 	{
 		expanding=true;
+		this.gameObject.AddComponent<AudioSource>();
+		AudioSource aS = GetComponent<AudioSource>();
+		aS.clip=explosionSound;
+		aS.Play ();
 		StartCoroutine(ProcessExplosion());
 	}
 
@@ -39,7 +43,7 @@ public class ExplosionAnimation : MonoBehaviour {
 				float alpha = r.material.GetFloat("_ClipRange");
 				r.material.SetFloat("_ClipRange", alpha-0.04f);
 			}
-			yield return new WaitForSeconds(.01f);
+			yield return new WaitForSeconds(.02f);
 		}
 
 	}

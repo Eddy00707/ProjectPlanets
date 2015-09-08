@@ -2,6 +2,8 @@
 using UnityEngine.Networking;
 using System.Collections;
 
+
+[RequireComponent (typeof(ConstantForce))]
 public class RotateSun : NetworkBehaviour 
 {
 	//public float planetSpeed;
@@ -28,7 +30,8 @@ public class RotateSun : NetworkBehaviour
 			//Debug.Log (Time.time); //DoRenderWorld()
 			Vector3 sumOfForces = new Vector3 (0, 0, 0);
 			for (int i=0; i<suns.Length; i++) { // do multiple gravity
-					if (suns [i]) {
+					if (suns [i]&&suns[i].gameObject!=this.gameObject) 
+					{
 							float m1 = GetComponent<Rigidbody> ().mass;
 							float m2 = suns [i].GetComponent<Rigidbody> ().mass;
 							//float r=transform.lossyScale.z;

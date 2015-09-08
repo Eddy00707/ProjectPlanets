@@ -1,4 +1,3 @@
-
 using UnityEngine.Networking;
 using UnityEngine;
 using System.Collections;
@@ -26,7 +25,7 @@ public class _PlayerShooting : NetworkBehaviour
 	public GameObject bulletPrefab;
 	const float MINIGUN_RELOAD_TIME=0.1f, MINIGUN_ALT_RELOAD_TIME = 0.3f; 
 	public AudioClip minigunShootingSound;
-	public AudioSource minigunAudio;
+	//public AudioSource minigunAudio;
 	//public GameObject destroyTEMP;
 
 	//Railgun
@@ -46,7 +45,7 @@ public class _PlayerShooting : NetworkBehaviour
 	public GameObject gravigunParticles;
 	private bool gravityCoroutineStarted=false, gravigunAtFullPower=false;
 	public AudioClip gravigunShootingSound, gravigunMaxEnergySound;
-	public AudioSource gravigunAudio;
+	//public AudioSource gravigunAudio;
 	//global
 	 bool [] shooting;
 	 bool [] reloading;
@@ -57,16 +56,16 @@ public class _PlayerShooting : NetworkBehaviour
 	public  event ChangingAmmo AmmoIsChanged ;
 
 
-	public const int defaultWeapon=3;
+	public const int DEFAULT_WEAPON=RAILGUN_PLACE;
 	
 	// Use this for initialization
-	void Start () { //FIXME when other player connects, first player always with minigun (maybe ask from server, which weapon is on)
+	void Start () 
+	{ 
 		minigunHeat=0;
 		graviForce=0;
 		Mheat=false;
 		Mcool=false;
 		Mshoot=false;
-//		minigunIsCooling=false;
 
 		shooting = new bool[10];
 		reloading =new bool[10];
@@ -83,7 +82,7 @@ public class _PlayerShooting : NetworkBehaviour
 		ammo[MINIGUN_PLACE]=500;
 		//ammo[RAILGUN_PLACE]=5;
 		if(AmmoIsChanged!=null) AmmoIsChanged();
-		selectedWeapon=defaultWeapon;
+		selectedWeapon=DEFAULT_WEAPON;
 		gunzModels[selectedWeapon].SetActive (true);
 
 		weaponAudio = this.GetComponent<AudioSource>();
@@ -141,7 +140,7 @@ public class _PlayerShooting : NetworkBehaviour
 
 				}
 
-				else if(selectedWeapon == GRAVIGUN_PLACE&&!shooting[GRAVIGUN_PLACE]&&!reloading[GRAVIGUN_PLACE]) //FIXME do quick gravigun trail interpolation
+				else if(selectedWeapon == GRAVIGUN_PLACE&&!shooting[GRAVIGUN_PLACE]&&!reloading[GRAVIGUN_PLACE])
 				{
 					if(AmmoIsChanged!=null) AmmoIsChanged();
 					PrepareGravigun();
@@ -150,13 +149,13 @@ public class _PlayerShooting : NetworkBehaviour
 				//else globalShooting=false;
 			}
 
-			else if(Input.GetButton ("Fire2"))  //pressed left mouse button
+			else if(Input.GetButton ("Fire2"))  //pressed right mouse button
 			{
 				
 				if(selectedWeapon==RAILGUN_PLACE&&!shooting[RAILGUN_PLACE]&&ammo[RAILGUN_PLACE]>0)
 				{
-					GameObject a = this.GetComponent<PlayerController>().camera;
-					a.GetComponent<Camera>().fieldOfView = 15;
+					Camera a = this.GetComponentInChildren<Camera>();
+					a.fieldOfView = 70;
 				}
 				else if(selectedWeapon == MINIGUN_PLACE&&!shooting[MINIGUN_PLACE]&&!reloading[MINIGUN_PLACE]&&ammo[MINIGUN_PLACE]>=6)
 				{
@@ -179,8 +178,9 @@ public class _PlayerShooting : NetworkBehaviour
 	/// </summary>
 	void StopAllGunz()
 	{
-		GameObject a = this.GetComponent<PlayerController>().camera;
-		a.GetComponent<Camera>().fieldOfView = 70;
+		if(selectedWeapon==GRAVIGUN_PLACE) weaponAudio.Stop ();
+		Camera a = this.GetComponentInChildren<Camera>();
+		a.fieldOfView = 70;
 		StopGravigun();
 		CmdGravigunStop();
 		CmdMinigunStop();
@@ -274,9 +274,9 @@ public class _PlayerShooting : NetworkBehaviour
 	IEnumerator RailGunShoot()
 	{
 		shooting[RAILGUN_PLACE] = true;
-		//railgunTrail.GetComponent<LineRenderer>().SetPosition(0,railgunTrail.transform.position*railgunTrail.transform.localToWorldMatrix);
+
 		railgunTrail.GetComponent<LineRenderer>().SetPosition(1,railgunTrail.transform.InverseTransformPoint(GetShootingPoint()));
-		Debug.Log(GetShootingPoint()+" "+(railgunTrail.transform.InverseTransformPoint(GetShootingPoint())));
+		//Debug.Log(GetShootingPoint()+" "+(railgunTrail.transform.InverseTransformPoint(GetShootingPoint())));
 		railgunTrail.SetActive (true);
 		weaponAudio.clip=railgunShootingSound;
 		weaponAudio.Play();
@@ -544,10 +544,11 @@ public class _PlayerShooting : NetworkBehaviour
 	void StopGravigun()
 	{
 		StopCoroutine ("GravirayCoroutine");
-		gravigunAudio.Stop ();
-		gravigunAudio.loop=false;
+		//weaponAudio.Stop ();
+		weaponAudio.loop=false;
 		gravigunAtFullPower=false;
-
+		PlayerGravity cf = this.GetComponent<PlayerGravity>();
+//		cf.AddGravityObject(null,0);
 		gravityCoroutineStarted=false;
 		gravigunParticles.SetActive (false);
 		graviForce=0;
@@ -597,13 +598,17 @@ public class _PlayerShooting : NetworkBehaviour
 	{
 		while(true)
 		{
-			if(!gravityCoroutineStarted) break;
+			if(!gravityCoroutineStarted)
+			{
+				weaponAudio.Stop();
+				break;
+			}
 			if(!gravigunAtFullPower&&graviForce>=0.25)
 			{
 				gravigunAtFullPower=true;
-				gravigunAudio.clip=gravigunMaxEnergySound;
-				gravigunAudio.loop=true;
-				gravigunAudio.Play ();
+				weaponAudio.clip=gravigunMaxEnergySound;
+				weaponAudio.loop=true;
+				weaponAudio.Play ();
 			}
 			if(graviForce<.5)graviForce+=0.05f;
 			
@@ -616,7 +621,6 @@ public class _PlayerShooting : NetworkBehaviour
 		while(true)
 		{
 			if(!gravityCoroutineStarted) break;
-//			Debug.Log (destinationObj.name);
 			SetGravityRay(destinationObj.transform.position);
 			yield return new WaitForSeconds(0.01f);
 		}
@@ -641,7 +645,7 @@ public class _PlayerShooting : NetworkBehaviour
 	{
 		
 		Vector3 gravityVector=(obj.transform.position-this.transform.position);
-		Vector3 thisForce = Vector3.Normalize(gravityVector)*graviForce*gravityVector.magnitude*3;
+		Vector3 thisForce = Vector3.Normalize(gravityVector)*graviForce*gravityVector.magnitude*300;
 		return thisForce;
 	}
 
@@ -650,13 +654,13 @@ public class _PlayerShooting : NetworkBehaviour
 	{
 		//Vector3 gravityForce=Vector3.zero;
 		graviForce=0;
-		gravigunAudio.clip=gravigunShootingSound;
-		gravigunAudio.Play();
+		weaponAudio.clip=gravigunShootingSound;
+		weaponAudio.Play();
 		while(true)
 		{
 			if(!gravityCoroutineStarted) break;
-			Rigidbody rb = this.GetComponent<Rigidbody>();
-			rb.AddForce(AddGravityObject(obj));
+			Rigidbody cf = this.GetComponent<Rigidbody>();
+			cf.AddForce(AddGravityObject(obj));
 //			Debug.Log(graviForce);
 			yield return new WaitForSeconds(0.05f);
 			

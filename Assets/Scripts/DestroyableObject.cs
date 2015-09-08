@@ -37,6 +37,7 @@ public class DestroyableObject : NetworkBehaviour
 				this.gameObject.GetComponent<MeshRenderer>().material = explosionMaterial;
 				this.gameObject.GetComponent<ExplosionAnimation>().enabled=true;
 				this.gameObject.GetComponent<SphereCollider>().enabled=false;
+				//this.gameObject.AddComponent<AudioSource>().
 			}
 			RpcSendHPToClient (health);
 			if(HPIsChanged!=null)	HPIsChanged();

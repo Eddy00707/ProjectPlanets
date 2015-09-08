@@ -9,11 +9,13 @@ public class PlayerGravity : NetworkBehaviour {
 //	public LineRenderer graviPath;
 	public GameObject[] gravityPlanets, gravitySuns;
 	public float GravityMultiplier=1f;
+	Vector3 graviVector;
 
-	const float HOVER_DISTANCE = 2;
+	const float HOVER_DISTANCE = 5;
 
 	void Start () 
 	{
+		graviVector=Vector3.zero;
 		ServerInterpolation.DoRenderWorld += CmdSetPlayerPosition;
 		//upperBody = GetComponent<MouseLook> ().gameObject; //Instantiate (upperBody, this.transform.position+new Vector3(0,-upperBodyDistance,0),this.transform.rotation);
 		gravityPlanets = GameObject.FindGameObjectsWithTag("Planet");
@@ -47,6 +49,8 @@ public class PlayerGravity : NetworkBehaviour {
 			}
 		}
 	}
+
+
 
 
 	[Command(channel=0)]
@@ -84,12 +88,12 @@ public class PlayerGravity : NetworkBehaviour {
 						float distance =Vector3.Magnitude(hit.point-lowerBody.transform.position);
 						//if(distance<HOVER_DISTANCE)
 						{
-							hoverForce=-mainVector*Mathf.Pow (HOVER_DISTANCE/distance,0.2f);
+							hoverForce=-mainVector*Mathf.Pow (HOVER_DISTANCE/distance,.1f);
 						}
 					}
 				}
 				//Debug.Log("Forces:"+hoverForce+","+mainVector);
-				mainVector+=hoverForce;
+				mainVector=hoverForce+mainVector;
 				b.force=mainVector;
 
 
