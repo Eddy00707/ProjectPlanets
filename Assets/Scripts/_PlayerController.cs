@@ -55,6 +55,7 @@ public class _PlayerController : NetworkBehaviour
 	{
 		if(this.isServer)
 		{
+			//Vector3 graviVector = this.gameObject.GetComponent<PlayerGravity>().graviVector;
 			Vector3 newForce = Vector3.zero;
 			float angle = Vector3.Angle(this.transform.up,this.transform.up);
 			//Debug.Log(angle);
@@ -62,7 +63,7 @@ public class _PlayerController : NetworkBehaviour
 			Vector3 lookDirection=Vector3.Normalize(Vector3.ProjectOnPlane(this.transform.forward,this.transform.up));
 			if(FwBk!=0)
 			{
-				
+				//newForce+=((FwBk>0)?1:-1)*Vector3.Cross(graviVector, transform.right)*playerSpeed;
 				newForce+= ((angle>90)?-1:1)	*((FwBk>0)?1:-1)*lookDirection*playerSpeed; //instead of forward
 			}
 			if(LtRt!=0)

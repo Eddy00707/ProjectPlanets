@@ -9,7 +9,7 @@ public class PlayerGravity : NetworkBehaviour {
 //	public LineRenderer graviPath;
 	public GameObject[] gravityPlanets, gravitySuns;
 	public float GravityMultiplier=1f;
-	Vector3 graviVector;
+	public Vector3 graviVector;
 
 	const float HOVER_DISTANCE = 5;
 
@@ -95,6 +95,7 @@ public class PlayerGravity : NetworkBehaviour {
 				//Debug.Log("Forces:"+hoverForce+","+mainVector);
 				mainVector=hoverForce+mainVector;
 				b.force=mainVector;
+			//	graviVector=Vector3.Normalize(mainVector);
 
 
 
