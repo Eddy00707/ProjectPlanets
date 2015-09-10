@@ -12,6 +12,7 @@ public class ExplosionAnimation : MonoBehaviour {
 	{
 		expanding=true;
 		this.gameObject.AddComponent<AudioSource>();
+		if(this.GetComponent<TrailRenderer>())
 		this.GetComponent<TrailRenderer>().enabled=false;
 		AudioSource aS = GetComponent<AudioSource>();
 		aS.clip=explosionSound;

@@ -15,9 +15,12 @@ public class RotateSun : NetworkBehaviour
 	public float SpeedMultiplier=1f;
 	public float direction1,direction2;//safafaf
 
+	const int MASS_MULTIPLIER=10;
+
 
 	void Start()
 	{
+		this.GetComponent<Rigidbody>().mass=this.transform.lossyScale.x*MASS_MULTIPLIER;
 		suns = GameObject.FindGameObjectsWithTag ("Sun");
 		ServerInterpolation.DoRenderWorld += CmdPlanetSpin;
 	}

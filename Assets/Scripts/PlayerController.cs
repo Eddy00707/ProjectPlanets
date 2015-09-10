@@ -6,7 +6,7 @@ public class PlayerController : NetworkBehaviour
 {
 	public float playerSpeed,crouchSpeed, jumpSpeed;
 	public bool LockCursor;
-	public GameObject lowerBody, upperBody, camera;
+	public GameObject camera;
 	//public float jumpDuration;
 	bool jumping = false;//, crouching=false;
 	public Texture2D cursorTexture;
@@ -55,36 +55,38 @@ public class PlayerController : NetworkBehaviour
 	{
 		if(this.isServer)
 		{
+			Vector3 graviVector = Vector3.Normalize( GetComponent<PlayerGravity>().graviForce);
+			Debug.Log("graviVector"+graviVector);
 			Vector3 newForce = Vector3.zero;
-			float angle = Vector3.Angle(upperBody.transform.up,lowerBody.transform.up);
+			float angle = Vector3.Angle(this.transform.up,this.transform.up);
 			//Debug.Log(angle);
-			ConstantForce cf = lowerBody.GetComponent<ConstantForce>();
-			Vector3 lookDirection=Vector3.Normalize(Vector3.ProjectOnPlane(upperBody.transform.forward,lowerBody.transform.up));
+			Rigidbody cf = this.GetComponent<Rigidbody>();
+			//Vector3 lookDirection=Vector3.Normalize(Vector3.ProjectOnPlane(this.transform.forward,this.transform.up));
 			if(FwBk!=0)
 			{
-				
-				newForce+= ((angle>90)?-1:1)	*((FwBk>0)?1:-1)*lookDirection*playerSpeed; //instead of forward
+				newForce+=((FwBk>0)?1:-1)* Vector3.Normalize(Vector3.ProjectOnPlane(transform.forward, -graviVector))*playerSpeed;
+				//newForce+= ((angle>90)?-1:1)	*((FwBk>0)?1:-1)*lookDirection*playerSpeed; //instead of forward
 			}
 			if(LtRt!=0)
 			{
-				newForce+= ((LtRt>0)?1:-1) * Vector3.Normalize(Vector3.ProjectOnPlane (upperBody.transform.right,lowerBody.transform.up))*playerSpeed;
+				newForce+= ((LtRt>0)?1:-1) * Vector3.Normalize( Vector3.Cross(Vector3.ProjectOnPlane(transform.forward, -graviVector),transform.forward))*playerSpeed;
 			}
-			cf.force+=Vector3.ClampMagnitude(newForce,playerSpeed);
-			if(jump)
-			{
-				if(!jumping)
-				{
-					jumping=true;
-					cf.force+=(lowerBody.transform.up*jumpSpeed);
-
-					StartCoroutine(MakeJump()); 
-				}
-			}
-			if(crouch)
-			{
-				cf.force+=(-lowerBody.transform.up*crouchSpeed);
-			}
-			RpcPlayerPosition(lowerBody.transform.rotation, lowerBody.transform.position);
+			cf.AddForce(Vector3.ClampMagnitude(newForce,playerSpeed));
+//			if(jump)
+//			{
+//				if(!jumping)
+//				{
+//					jumping=true;
+//					cf.force+=(this.transform.up*jumpSpeed);
+//
+//					StartCoroutine(MakeJump()); 
+//				}
+//			}
+//			if(crouch)
+//			{
+//				cf.force+=(-this.transform.up*crouchSpeed);
+//			}
+			RpcPlayerPosition(this.transform.rotation, this.transform.position);
 			
 		}                                             
 	}        
@@ -97,7 +99,7 @@ public class PlayerController : NetworkBehaviour
 	{
 		if(!this.isServer)
 		{
-			lowerBody.transform.rotation=rotationL;
+			this.transform.rotation=rotationL;
 			StartCoroutine (InterpolatePositionL (positionL));
 		}	
 	}
@@ -107,10 +109,10 @@ public class PlayerController : NetworkBehaviour
 	IEnumerator InterpolatePositionL(Vector3 destination)
 	{
 		int stepCount = 5;
-		Vector3 movement = (destination-lowerBody.transform.position)/stepCount;
+		Vector3 movement = (destination-this.transform.position)/stepCount;
 		for (int i = 0; i < stepCount; i++) 
 		{
-			lowerBody.transform.position+=movement;
+			this.transform.position+=movement;
 			yield return new WaitForSeconds(0.05f/ServerInterpolation.playerInterpolation);
 		}
 		yield return null;

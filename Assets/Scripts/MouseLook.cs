@@ -20,7 +20,7 @@ public class MouseLook : NetworkBehaviour
 
 	public float minimumY = -60F;
 	public float maximumY = 60F;
-	public GameObject upperBody;
+	//public GameObject upperBody;
 	float rotationX = 0F;
 	float rotationY = 0F;
 
@@ -30,8 +30,8 @@ public class MouseLook : NetworkBehaviour
 	{
 		ServerInterpolation.DoRenderWorld+=SendPlayerPosition;
 		// Make the rigid body not change rotation
-		if (upperBody.GetComponent<Rigidbody>())
-			upperBody.GetComponent<Rigidbody>().freezeRotation = true;
+		if (this.GetComponent<Rigidbody>())
+			this.GetComponent<Rigidbody>().freezeRotation = true;
 
 	}
 
@@ -42,7 +42,7 @@ public class MouseLook : NetworkBehaviour
 		{
 			if(this.isLocalPlayer) 
 			{
-				Quaternion originalRotation = upperBody.transform.localRotation;
+				Quaternion originalRotation = this.transform.localRotation;
 				// Read the mouse input axis
 				rotationX = Input.GetAxis("Mouse X") * sensitivityX;
 				rotationY = Input.GetAxis("Mouse Y") * sensitivityY;
@@ -53,7 +53,7 @@ public class MouseLook : NetworkBehaviour
 
 
 
-				upperBody.transform.localRotation = (originalRotation * xQuaternion * yQuaternion);
+				this.transform.localRotation = (originalRotation * xQuaternion * yQuaternion);
 
 			}
 		}
@@ -64,7 +64,7 @@ public class MouseLook : NetworkBehaviour
 	void SendPlayerPosition()
 	{
 		if(this)
-		CmdLocalRotation (upperBody.transform.localRotation);
+			CmdLocalRotation (this.transform.localRotation);
 	}
 
 	[Command(channel=0)]
@@ -72,8 +72,8 @@ public class MouseLook : NetworkBehaviour
 	{
 		if(this.isServer)
 		{
-			upperBody.transform.localRotation=newLocalRotation;
-			RpcLocalRotation(upperBody.transform.localRotation);
+			this.transform.localRotation=newLocalRotation;
+			RpcLocalRotation(this.transform.localRotation);
 		}
 	}
 //
@@ -83,7 +83,7 @@ public class MouseLook : NetworkBehaviour
 	{
 		if(this.isClient&&!this.isLocalPlayer)
 		{
-			upperBody.transform.localRotation=newLocalRotation;
+			this.transform.localRotation=newLocalRotation;
 			
 		}
 	}
